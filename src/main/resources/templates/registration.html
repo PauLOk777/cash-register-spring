@@ -6,11 +6,12 @@
 </head>
 <body>
     <p>Registration page</p>
-    <p th:if="${error_message}">${error_message}</p>
-    <form action="/registration" method="post">
-        <div><label> User Name : <input type="text" name="username"/> </label></div>
-        <div><label> Password: <input type="password" name="password"/> </label></div>
-        <div><input type="submit" value="Registration"/></div>
+<!--    <p th:if="${error_message}">${error_message}</p>-->
+    <form action="/registration"  method="post">
+        <label> Username : <input type="text" name="username"/></label>
+        <label> Email : <input type="email" name="email"></label>
+        <label> Password: <input type="password" name="password"></label>
+        <input type="submit" value="Registration"/>
     </form>
     <a href="/login">Login</a>
 </body>

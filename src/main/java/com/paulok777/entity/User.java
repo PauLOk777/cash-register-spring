@@ -1,14 +1,22 @@
 package com.paulok777.entity;
 
+import com.paulok777.dto.UserDTO;
+import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
+@Data
 @Entity(name="users")
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
-    private String name;
+    private String username;
     private String email;
     private String password;
     private boolean active;
@@ -19,81 +27,54 @@ public class User {
     private Set<Role> roles;
 
     public User() {
+
     }
 
-    public User(String name, String email) {
-        this.name = name;
+    public User(UserDTO userDTO) {
+        this.username = userDTO.getUsername();
+        this.password = userDTO.getPassword();
+        this.email = userDTO.getEmail();
+        this.active = true;
+        this.roles = Collections.singleton(Role.USER);
+    }
+
+    public User(String username, String email, String password) {
+        this.username = username;
         this.email = email;
+        this.password = password;
     }
 
-    public User(Long id, String name, String email) {
+    public User(Long id, String username, String email, String password, Boolean active, Set<Role> roles) {
         this.id = id;
-        this.name = name;
-        this.email = email;
-    }
-
-    public User(String name, String email, String password, boolean active, Set<Role> roles) {
-        this.name = name;
+        this.username = username;
         this.email = email;
         this.password = password;
         this.active = active;
         this.roles = roles;
     }
 
-    public User(Long id, String name, String email, String password, boolean active, Set<Role> roles) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.active = active;
-        this.roles = roles;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public Long getId() {
-        return id;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public boolean isEnabled() {
+        return isActive();
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles();
     }
 }

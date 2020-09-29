@@ -5,20 +5,20 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-    <div>
-        <form th:action="@{/logout}" method="post">
-            <input type="submit" value="Sign Out"/>
-        </form>
-    </div>
-    <form action="/" method="post">
+    <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Sign Out"/>
+    </form>
+    <form action="/main" method="post">
         <input type="text" name="name">
+        <input type="text" name="password">
         <input type="text" name="email">
         <input type="submit">
     </form>
     <h3>List of users:</h3>
     <ul th:each="user : ${users}">
         <li th:text="${user.id}">Id</li>
-        <li th:text="${user.name}">Name</li>
+        <li th:text="${user.username}">Name</li>
         <li th:text="${user.email}">Email</li>
     </ul>
 </body>
