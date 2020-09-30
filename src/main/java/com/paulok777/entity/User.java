@@ -1,7 +1,9 @@
 package com.paulok777.entity;
 
 import com.paulok777.dto.UserDTO;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,14 +13,19 @@ import java.util.Collections;
 import java.util.Set;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name="users")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
     private String username;
-    private String email;
     private String password;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phoneNumber;
     private boolean active;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
@@ -26,31 +33,15 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    public User() {
-
-    }
-
     public User(UserDTO userDTO) {
         this.username = userDTO.getUsername();
         this.password = userDTO.getPassword();
+        this.firstName = userDTO.getFirstName();
+        this.lastName = userDTO.getLastName();
         this.email = userDTO.getEmail();
+        this.phoneNumber = userDTO.getPhoneNumber();
         this.active = true;
-        this.roles = Collections.singleton(Role.USER);
-    }
-
-    public User(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-    }
-
-    public User(Long id, String username, String email, String password, Boolean active, Set<Role> roles) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.active = active;
-        this.roles = roles;
+        this.roles = Collections.singleton(Role.valueOf(userDTO.getRole()));
     }
 
     @Override

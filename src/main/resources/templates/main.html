@@ -1,25 +1,11 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
-    <title>Main</title>
+    <title>Getting Started: Serving Web Content</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-    <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
-    <form th:action="@{/logout}" method="post">
-        <input type="submit" value="Sign Out"/>
-    </form>
-    <form action="/main" method="post">
-        <input type="text" name="name">
-        <input type="text" name="password">
-        <input type="text" name="email">
-        <input type="submit">
-    </form>
-    <h3>List of users:</h3>
-    <ul th:each="user : ${users}">
-        <li th:text="${user.id}">Id</li>
-        <li th:text="${user.username}">Name</li>
-        <li th:text="${user.email}">Email</li>
-    </ul>
+<p>Hello</p>
+<a href="/login">Login</a>
 </body>
 </html>

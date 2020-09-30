@@ -1,5 +1,6 @@
 package com.paulok777.config;
 
+import com.paulok777.entity.Role;
 import com.paulok777.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -19,14 +20,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/registration").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/products", "/products/{id}")
+                .hasAuthority(Role.COMMODITY_EXPERT.getAuthority())
+                .antMatchers("/orders/products/cancel", "/orders/cancel", "/reports/x", "/reports/z")
+                .hasAuthority(Role.SENIOR_CASHIER.getAuthority())
+                .antMatchers("/orders", "/orders/products", "/orders/products/{id}", "orders/close/{id}")
+                .hasAnyAuthority(Role.CASHIER.getAuthority(), Role.SENIOR_CASHIER.getAuthority())
+                .antMatchers("/logout")
+                .hasAnyAuthority(Role.CASHIER.getAuthority(), Role.SENIOR_CASHIER.getAuthority(), Role.COMMODITY_EXPERT.getAuthority())
+                .antMatchers("/", "/login", "/registration").anonymous()
                 .and()
                 .formLogin()
-                .loginPage("/login")
-                .permitAll()
-                .and()
-                .logout().permitAll();
+                .loginPage("/login");
     }
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

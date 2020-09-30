@@ -8,10 +8,20 @@
     <p>Registration page</p>
 <!--    <p th:if="${error_message}">${error_message}</p>-->
     <form action="/registration"  method="post">
-        <label> Username : <input type="text" name="username"/></label>
-        <label> Email : <input type="email" name="email"></label>
-        <label> Password: <input type="password" name="password"></label>
-        <input type="submit" value="Registration"/>
+        <div><label> First name : <input type="text" name="firstName"/></label></div>
+        <div><label> Last name : <input type="text" name="lastName"/></label></div>
+        <div><label> Email : <input type="email" name="email"></label></div>
+        <div><label> Phone number : <input type="tel" name="phoneNumber"></label></div>
+        <div><label> Username(your login) : <input type="text" name="username"/></label></div>
+        <div><label> Password: <input type="password" name="password"></label></div>
+        <div>
+            <select name="role" id="role">
+                <option value="CASHIER">Cashier</option>
+                <option value="SENIOR_CASHIER">Senior cashier</option>
+                <option value="COMMODITY_EXPERT">Commodity expert</option>
+            </select>
+        </div>
+        <div><input type="submit" value="Registration"/></div>
     </form>
     <a href="/login">Login</a>
 </body>
