@@ -16,9 +16,9 @@
         <div><label> Password: <input type="password" name="password"></label></div>
         <div>
             <select name="role" id="role">
-                <option value="CASHIER">Cashier</option>
-                <option value="SENIOR_CASHIER">Senior cashier</option>
-                <option value="COMMODITY_EXPERT">Commodity expert</option>
+                <option th:each="position: ${positions}" th:value="${position.name()}">
+                    [[${position.name()}]]
+                </option>
             </select>
         </div>
         <div><input type="submit" value="Registration"/></div>

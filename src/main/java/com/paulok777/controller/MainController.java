@@ -26,7 +26,8 @@ public class MainController {
     }
 
     @GetMapping("/registration")
-    public String registration() {
+    public String registration(Model model) {
+        model.addAttribute("positions", Role.values());
         return "registration";
     }
 

@@ -1,10 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Products</title>
 </head>
 <body>
-    Products
+    <form action="/products" method="post">
+        <label>
+            Code: <input type="text" placeholder="code" name="code">
+        </label>
+        <label>
+            Name: <input type="text" placeholder="name" name="name">
+        </label>
+        <label>
+            Price: <input type="number" placeholder="price" name="price">
+        </label>
+        <label>
+            Amount: <input type="number" placeholder="amount" name="amount">
+        </label>
+        <label for="measure">Measure: </label><select name="measure" id="measure">
+            <option th:each="measure: ${measures}" th:value="${measure.name()}">
+                [[${measure.name()}]]
+            </option>
+        </select>
+        <input type="submit" value="Add">
+    </form>
+    <div th:each="product: ${products}">
+        <form th:action="@{/products/} + ${product.id}" method="post">
+            <span>[[${product}]]</span>
+            <input type="number" name="amount">
+            <input type="submit" value="Set">
+        </form>
+    </div>
 </body>
 </html>
