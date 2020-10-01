@@ -35,7 +35,6 @@ public class OrderController {
     @GetMapping("/products/{id}")
     public String getOrderById(@PathVariable String id, Model model) {
         List<Product> products = orderService.getProductsByOrderId(Long.valueOf(id));
-        System.out.println(products);
         model.addAttribute("orderId", id);
         model.addAttribute("products", products);
         return "orderProducts";

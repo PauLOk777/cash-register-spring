@@ -1,10 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Orders</title>
 </head>
 <body>
-    Orders
+    <form action="/orders" method="post">
+        <input type="submit" value="Create new order"/>
+    </form>
+    <div th:each="order: ${orders}">
+        <a th:href="@{/orders/products/} + ${order.id}">Order!</a>
+        <span>[[${order}]]</span>
+<!--        <form th:action="@{/products/} + ${product.id}" method="post">-->
+<!--            <input type="number" name="amount">-->
+<!--            <input type="submit" value="Set">-->
+<!--        </form>-->
+    </div>
 </body>
 </html>

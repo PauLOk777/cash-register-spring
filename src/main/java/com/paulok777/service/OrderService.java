@@ -1,7 +1,6 @@
 package com.paulok777.service;
 
 import com.paulok777.entity.*;
-import com.paulok777.repository.OrderProductsRepository;
 import com.paulok777.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +12,11 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserService userService;
     private final ProductService productService;
-    private final OrderProductsRepository orderProductsRepository;
 
-    public OrderService(OrderRepository orderRepository, UserService userService, ProductService productService, OrderProductsRepository orderProductsRepository) {
+    public OrderService(OrderRepository orderRepository, UserService userService, ProductService productService) {
         this.orderRepository = orderRepository;
         this.userService = userService;
         this.productService = productService;
-        this.orderProductsRepository = orderProductsRepository;
     }
 
     public List<Order> getOrders() {
@@ -53,15 +50,19 @@ public class OrderService {
         Order currOrder = order.orElseThrow();
 
         OrderProducts orderProducts = new OrderProducts();
+        orderProducts.setOrder(currOrder);
+        orderProducts.setProduct(product);
+        orderProducts.setAmount(amount);
 
         Long totalPrice = currOrder.getTotalPrice();
         currOrder.setTotalPrice(totalPrice + product.getPrice() * amount);
+        currOrder.getOrderProducts().add(orderProducts);
 
         Long productAmount = product.getAmount();
         product.setAmount(productAmount - amount);
+        product.getOrderProducts().add(orderProducts);
 
         orderRepository.save(currOrder);
         productService.saveProduct(product);
-        orderProductsRepository.save(orderProducts);
     }
 }

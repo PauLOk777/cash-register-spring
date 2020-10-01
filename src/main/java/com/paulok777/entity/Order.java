@@ -1,16 +1,14 @@
 package com.paulok777.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,7 +24,7 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinColumn(name = "user_id")
     private User user;
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderProducts> orderProducts;
 
     public Order(User user) {

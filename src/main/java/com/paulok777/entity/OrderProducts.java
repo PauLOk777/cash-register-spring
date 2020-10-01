@@ -1,30 +1,28 @@
 package com.paulok777.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 @Entity
 public class OrderProducts {
     @EmbeddedId
-    OrderProductsKey id;
+    private OrderProductsKey id = new OrderProductsKey();
 
     @ManyToOne
     @MapsId("orderId")
     @JoinColumn(name = "order_id")
-    Order order;
+    @JsonIgnore
+    private Order order;
 
     @ManyToOne
     @MapsId("productId")
     @JoinColumn(name = "product_id")
-    Product product;
+    private Product product;
 
-    long amount;
-
-
+    private Long amount;
 }
