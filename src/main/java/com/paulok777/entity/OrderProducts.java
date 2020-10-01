@@ -24,5 +24,7 @@ public class OrderProducts {
     @JoinColumn(name = "product_id")
     Product product;
 
-    int amount;
+    long amount;
+
+
 }

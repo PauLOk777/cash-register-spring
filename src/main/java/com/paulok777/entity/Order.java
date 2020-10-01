@@ -1,6 +1,5 @@
 package com.paulok777.entity;
 
-import com.paulok777.dto.OrderDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +12,7 @@ import java.util.Set;
 
 @Data
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "orders")
 public class Order {
@@ -33,6 +33,6 @@ public class Order {
         totalPrice = 0L;
         status = OrderStatus.NEW;
         this.user = user;
-        orderProducts = new HashSet<OrderProducts>();
+        orderProducts = new HashSet<>();
     }
 }

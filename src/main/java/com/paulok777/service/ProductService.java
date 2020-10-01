@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -22,7 +24,35 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    public Optional<Product> getProductById(Long id) {
+        return productRepository.findById(id);
+    }
+
     public void setAmountById(Long amount, Long id) {
         productRepository.updateAmountById(amount, id);
+    }
+
+    public Optional<Product> findByCode(String code) {
+        return productRepository.findByCode(code);
+    }
+
+    public Optional<Product> findByName(String name) {
+        return productRepository.findByName(name);
+    }
+
+    public Product findByIdentifier(String productIdentifier) {
+        Optional<Product> product = findByCode(productIdentifier);
+        if (product.isPresent()) {
+            return product.get();
+        }
+        product = findByName(productIdentifier);
+        if (product.isPresent()) {
+            return product.get();
+        }
+        throw new NoSuchElementException("No products for this identifier");
+    }
+
+    public void saveProduct(Product product) {
+        productRepository.save(product);
     }
 }
