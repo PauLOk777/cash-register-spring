@@ -55,4 +55,8 @@ public class ProductService {
     public void saveProduct(Product product) {
         productRepository.save(product);
     }
+
+    public Optional<Product> findById(Long id) {
+        return productRepository.findById(id);
+    }
 }

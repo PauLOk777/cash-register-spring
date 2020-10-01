@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity(name = "orders")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long totalPrice;
     private LocalDateTime createDate = LocalDateTime.now();

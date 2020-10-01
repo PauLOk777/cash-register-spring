@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -29,18 +30,14 @@ public class OrderService {
     }
 
     @Transactional
-    public List<Product> getProductsByOrderId(Long id) {
+    public Map<Long, Product> getProductsByOrderId(Long id) {
         Optional<Order> order = orderRepository.findById(id);
-        if (order.isPresent()) {
-
-             Set<OrderProducts> orderProducts = order.get().getOrderProducts();
-             List<Product> products = new ArrayList<>();
-             for (OrderProducts orderProduct: orderProducts) {
-                products.add(orderProduct.getProduct());
-             }
-             return products;
+        Set<OrderProducts> orderProducts = order.orElseThrow().getOrderProducts();
+        Map<Long, Product> products = new HashMap<>();
+        for (OrderProducts orderProduct: orderProducts) {
+            products.put(orderProduct.getAmount(), orderProduct.getProduct());
         }
-        throw new NoSuchElementException("No order with this id");
+        return products;
     }
 
     @Transactional
@@ -54,15 +51,58 @@ public class OrderService {
         orderProducts.setProduct(product);
         orderProducts.setAmount(amount);
 
-        Long totalPrice = currOrder.getTotalPrice();
+        long totalPrice = currOrder.getTotalPrice();
         currOrder.setTotalPrice(totalPrice + product.getPrice() * amount);
         currOrder.getOrderProducts().add(orderProducts);
 
-        Long productAmount = product.getAmount();
+        long productAmount = product.getAmount();
         product.setAmount(productAmount - amount);
         product.getOrderProducts().add(orderProducts);
 
         orderRepository.save(currOrder);
         productService.saveProduct(product);
+    }
+
+    @Transactional
+    public void changeAmountOfProduct(String orderId, String productId, Long amount) {
+        Optional<Order> order = orderRepository.findById(Long.valueOf(orderId));
+        Optional<Product> product = productService.findById(Long.valueOf(productId));
+        Order currOrder = order.orElseThrow();
+        Product currProduct = product.orElseThrow();
+
+        Set<OrderProducts> orderProductsSet = currOrder
+                .getOrderProducts()
+                .stream()
+                .filter(orderProduct -> Long.valueOf(productId).equals(orderProduct.getProduct().getId()))
+                .collect(Collectors.toSet());
+
+        OrderProducts orderProducts = new OrderProducts();
+        long prevAmount = -1;
+        for (OrderProducts orderProduct: orderProductsSet) {
+            prevAmount = orderProduct.getAmount();
+            orderProducts = orderProduct;
+        }
+
+        if (prevAmount == -1) {
+            throw new RuntimeException("previousAmount == -1");
+        }
+        if (prevAmount + currProduct.getAmount() < amount) {
+            throw new IllegalArgumentException("No so many products.");
+        }
+
+        currOrder.getOrderProducts().remove(orderProducts);
+        currProduct.getOrderProducts().remove(orderProducts);
+        orderProducts.setAmount(amount);
+
+        long differenceInAmount = amount - prevAmount;
+        long differenceIntPrice = differenceInAmount * currProduct.getPrice();
+        currOrder.setTotalPrice(currOrder.getTotalPrice() + differenceIntPrice);
+        currOrder.getOrderProducts().add(orderProducts);
+
+        currProduct.setAmount(currProduct.getAmount() - differenceInAmount);
+        currProduct.getOrderProducts().add(orderProducts);
+
+        orderRepository.save(currOrder);
+        productService.saveProduct(currProduct);
     }
 }

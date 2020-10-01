@@ -1,17 +1,15 @@
 package com.paulok777.controller;
 
 import com.paulok777.entity.Order;
-import com.paulok777.entity.OrderProducts;
 import com.paulok777.entity.Product;
 import com.paulok777.service.OrderService;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/orders")
@@ -34,7 +32,7 @@ public class OrderController {
 
     @GetMapping("/products/{id}")
     public String getOrderById(@PathVariable String id, Model model) {
-        List<Product> products = orderService.getProductsByOrderId(Long.valueOf(id));
+        Map<Long, Product> products = orderService.getProductsByOrderId(Long.valueOf(id));
         model.addAttribute("orderId", id);
         model.addAttribute("products", products);
         return "orderProducts";
@@ -48,8 +46,10 @@ public class OrderController {
     }
 
     @PostMapping("/products/{orderId}/{productId}")
-    public String changeAmountOfProduct() {
-        return "orders/products/{id}";
+    public String changeAmountOfProduct(@PathVariable String orderId, @PathVariable String productId,
+                                        @RequestParam Long amount) {
+        orderService.changeAmountOfProduct(orderId, productId, amount);
+        return "redirect:/orders/products/" + orderId;
     }
 
     @PostMapping("/close")
