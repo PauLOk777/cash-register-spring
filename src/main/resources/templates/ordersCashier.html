@@ -10,12 +10,8 @@
         <input type="submit" value="Create new order"/>
     </form>
     <div th:each="order: ${orders}">
-        <a th:href="@{/orders/products/} + ${order.id}">Order!</a>
+        <a th:href="@{/orders/} + ${order.id}">Order!</a>
         <span>[[${order}]]</span>
-<!--        <form th:action="@{/products/} + ${product.id}" method="post">-->
-<!--            <input type="number" name="amount">-->
-<!--            <input type="submit" value="Set">-->
-<!--        </form>-->
     </div>
 </body>
 </html>

@@ -6,13 +6,14 @@
     <title>Order products</title>
 </head>
 <body>
-    <form th:action="@{/orders/products/} + ${orderId}" method="post">
+    <form th:action="@{/orders/} + ${orderId}" method="post">
         <input type="text" name="productIdentifier">
         <input type="number" name="amount" value="1">
         <input type="submit" value="Add">
     </form>
     <div th:each="product: ${products}">
-        <form th:action="@{/orders/products/} + ${orderId + '/' + product.value.id}" method="post">
+
+        <form th:action="@{/orders/} + ${orderId + '/' + product.value.id}" method="post">
             <span>[[${product}]]</span>
             <input type="number" name="amount">
             <input type="submit" value="Set">

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Orders</title>
+</head>
+<body>
+    <form action="/orders" method="post">
+        <input type="submit" value="Create new order"/>
+    </form>
+    <div th:each="order: ${orders}">
+        <a th:href="@{/orders/} + ${order.id}">Order!</a>
+        <span>[[${order}]]</span>
+    </div>
+</body>
+</html>

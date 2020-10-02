@@ -17,12 +17,10 @@ import java.util.Collections;
 
 @Controller
 public class MainController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @GetMapping
-    public String mainPage() {
-        return "main";
+    public MainController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("/registration")
