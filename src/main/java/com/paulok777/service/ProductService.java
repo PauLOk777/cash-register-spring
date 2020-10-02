@@ -24,10 +24,6 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
-    }
-
     public void setAmountById(Long amount, Long id) {
         productRepository.updateAmountById(amount, id);
     }

@@ -3,14 +3,12 @@ package com.paulok777.controller;
 import com.paulok777.entity.Order;
 import com.paulok777.entity.Product;
 import com.paulok777.entity.Role;
-import com.paulok777.entity.User;
 import com.paulok777.service.OrderService;
 import com.paulok777.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -88,9 +86,9 @@ public class OrderController {
         return "redirect:/orders";
     }
 
-    @PostMapping("/cancel/{order_id}/{product_id}")
+    @PostMapping("/cancel/{orderId}/{productId}")
     public String cancelProduct(@PathVariable String orderId, @PathVariable String productId) {
         orderService.cancelProduct(orderId, productId);
-        return "redirect:/orders/{id}";
+        return "redirect:/orders/" + orderId;
     }
 }
