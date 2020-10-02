@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -76,17 +77,20 @@ public class OrderController {
     }
 
     @PostMapping("/close/{id}")
-    public String closeOrder() {
+    public String closeOrder(@PathVariable String id) {
+        orderService.makeStatusClosed(id);
         return "redirect:/orders";
     }
 
     @PostMapping("/cancel/{id}")
-    public String cancelOrder() {
+    public String cancelOrder(@PathVariable String id) {
+        orderService.cancelOrder(id);
         return "redirect:/orders";
     }
 
     @PostMapping("/cancel/{order_id}/{product_id}")
-    public String cancelProduct() {
+    public String cancelProduct(@PathVariable String orderId, @PathVariable String productId) {
+        orderService.cancelProduct(orderId, productId);
         return "redirect:/orders/{id}";
     }
 }

@@ -21,7 +21,7 @@ public class OrderService {
     }
 
     public List<Order> getOrders() {
-        return orderRepository.findAll();
+        return orderRepository.findByStatus(OrderStatus.NEW);
     }
 
     public Order saveNewOrder() {
@@ -32,7 +32,11 @@ public class OrderService {
     @Transactional
     public Map<Long, Product> getProductsByOrderId(Long id) {
         Optional<Order> order = orderRepository.findById(id);
-        Set<OrderProducts> orderProducts = order.orElseThrow().getOrderProducts();
+        Order currOrder = order.orElseThrow();
+        if (!currOrder.getStatus().equals(OrderStatus.NEW)) {
+            throw new IllegalArgumentException("Order was closed or canceled");
+        }
+        Set<OrderProducts> orderProducts = currOrder.getOrderProducts();
         Map<Long, Product> products = new HashMap<>();
         for (OrderProducts orderProduct: orderProducts) {
             products.put(orderProduct.getAmount(), orderProduct.getProduct());
@@ -104,5 +108,30 @@ public class OrderService {
 
         orderRepository.save(currOrder);
         productService.saveProduct(currProduct);
+    }
+
+    public void makeStatusClosed(String id) {
+        orderRepository.changeStatusToClosed(Long.valueOf(id), OrderStatus.CLOSED);
+    }
+
+    @Transactional
+    public void cancelOrder(String id) {
+        // change status, add amount to all products
+        Optional<Order> order = orderRepository.findById(Long.valueOf(id));
+        Order currOrder = order.orElseThrow();
+
+        for (OrderProducts orderProduct: currOrder.getOrderProducts()) {
+            Product product = orderProduct.getProduct();
+            product.setAmount(product.getAmount() + orderProduct.getAmount());
+            productService.saveProduct(product);
+        }
+
+        currOrder.setStatus(OrderStatus.CANCELED);
+        orderRepository.save(currOrder);
+    }
+
+    @Transactional
+    public void cancelProduct(String orderId, String productId) {
+
     }
 }

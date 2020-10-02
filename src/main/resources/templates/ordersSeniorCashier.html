@@ -18,10 +18,10 @@
     <div th:each="order: ${orders}">
         <a th:href="@{/orders/} + ${order.id}">Order!</a>
         <span>[[${order}]]</span>
-        <form th:action="@{/orders/cancel/} + ${order.id}">
+        <form th:action="@{/orders/cancel/} + ${order.id}" method="post">
             <input type="submit" value="Cancel">
         </form>
-        <form th:action="@{/orders/close/} + ${order.id}">
+        <form th:action="@{/orders/close/} + ${order.id}" method="post">
             <input type="submit" value="Close">
         </form>
     </div>
