@@ -2,8 +2,10 @@ package com.paulok777.controller;
 
 import com.paulok777.entity.Order;
 import com.paulok777.entity.Product;
+import com.paulok777.entity.Role;
+import com.paulok777.entity.User;
 import com.paulok777.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.paulok777.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +17,26 @@ import java.util.Map;
 @RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
+    private final UserService userService;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, UserService userService) {
         this.orderService = orderService;
+        this.userService = userService;
     }
 
     @GetMapping
     public String getOrders(Model model) {
         List<Order> orders = orderService.getOrders();
         model.addAttribute("orders", orders);
-        return "ordersCashier";
+        Role role = userService.getCurrentUserRole();
+        switch (role) {
+            case CASHIER:
+                return "ordersCashier";
+            case SENIOR_CASHIER:
+                return "ordersSeniorCashier";
+            default:
+                return "main";
+        }
     }
 
     @PostMapping
@@ -38,12 +50,20 @@ public class OrderController {
         Map<Long, Product> products = orderService.getProductsByOrderId(Long.valueOf(id));
         model.addAttribute("orderId", id);
         model.addAttribute("products", products);
-        return "orderProductsCashier";
+        Role role = userService.getCurrentUserRole();
+        switch (role) {
+            case CASHIER:
+                return "orderProductsCashier";
+            case SENIOR_CASHIER:
+                return "orderProductsSeniorCashier";
+            default:
+                return "main";
+        }
     }
 
     @PostMapping("/{id}")
     public String addProduct(@PathVariable String id, @RequestParam String productIdentifier,
-                             @RequestParam Long amount, Model model) {
+                             @RequestParam Long amount) {
         orderService.addProductToOrderByCodeOrName(id, productIdentifier, amount);
         return "redirect:/orders/" + id;
     }
@@ -57,16 +77,16 @@ public class OrderController {
 
     @PostMapping("/close/{id}")
     public String closeOrder() {
-        return "ordersCashier";
+        return "redirect:/orders";
     }
 
     @PostMapping("/cancel/{id}")
     public String cancelOrder() {
-        return "ordersCashier";
+        return "redirect:/orders";
     }
 
     @PostMapping("/cancel/{order_id}/{product_id}")
     public String cancelProduct() {
-        return "orders/{id}";
+        return "redirect:/orders/{id}";
     }
 }
