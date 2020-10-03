@@ -12,8 +12,11 @@ import java.util.Optional;
 
 @Service
 public class ProductService {
-    @Autowired
-    private ProductRepository productRepository;
+    private final ProductRepository productRepository;
+
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public List<Product> getProducts() {
         return productRepository.findAll();
@@ -38,14 +41,10 @@ public class ProductService {
 
     public Product findByIdentifier(String productIdentifier) {
         Optional<Product> product = findByCode(productIdentifier);
-        if (product.isPresent()) {
-            return product.get();
-        }
-        product = findByName(productIdentifier);
-        if (product.isPresent()) {
-            return product.get();
-        }
-        throw new NoSuchElementException("No products for this identifier");
+        return product.orElseGet(
+                () -> findByName(productIdentifier).orElseThrow(
+                        () -> new NoSuchElementException("No products for this identifier"))
+        );
     }
 
     public void saveProduct(Product product) {

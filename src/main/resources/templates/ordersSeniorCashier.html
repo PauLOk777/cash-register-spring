@@ -6,22 +6,25 @@
     <title>Orders</title>
 </head>
 <body>
-    <form action="/reports/x" method="get">
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Log Out"/>
+    </form>
+    <form action="/senior_cashier/reports/x" method="get">
         <input type="submit" value="X-report"/>
     </form>
-    <form action="/orders" method="post">
+    <form action="/senior_cashier/orders" method="post">
         <input type="submit" value="Create new order"/>
     </form>
-    <form action="/reports/z" method="get">
+    <form action="/senior_cashier/reports/z" method="get">
         <input type="submit" value="Z-report"/>
     </form>
     <div th:each="order: ${orders}">
-        <a th:href="@{/orders/} + ${order.id}">Order!</a>
+        <a th:href="@{/senior_cashier/orders/} + ${order.id}">Order!</a>
         <span>[[${order}]]</span>
-        <form th:action="@{/orders/cancel/} + ${order.id}" method="post">
+        <form th:action="@{/senior_cashier/orders/cancel/} + ${order.id}" method="post">
             <input type="submit" value="Cancel">
         </form>
-        <form th:action="@{/orders/close/} + ${order.id}" method="post">
+        <form th:action="@{/senior_cashier/orders/close/} + ${order.id}" method="post">
             <input type="submit" value="Close">
         </form>
     </div>

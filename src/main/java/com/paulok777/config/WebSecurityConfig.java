@@ -20,16 +20,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/products", "/products/{id}")
+                .antMatchers("/commodity_expert/products", "/commodity_expert/products/{id}")
                 .hasAuthority(Role.COMMODITY_EXPERT.getAuthority())
-                .antMatchers("/orders/cancel/{orderId}/{productId}", "/orders/cancel/{id}", "/reports/x", "/reports/z")
+                .antMatchers(
+                        "/senior_cashier/orders/cancel/{orderId}/{productId}",
+                        "/senior_cashier/orders/cancel/{id}", "/senior_cashier/reports/x",
+                        "/senior_cashier/reports/z", "/senior_cashier/orders", "/senior_cashier/orders/{id}",
+                        "/senior_cashier/orders/{orderId}/{productId}", "/senior_cashier/orders/close/{id}")
                 .hasAuthority(Role.SENIOR_CASHIER.getAuthority())
-                .antMatchers("/orders", "/orders/{id}", "/orders/{orderId}/{productId}", "orders/close/{id}")
+                .antMatchers("/senior_cashier/orders", "/senior_cashier/orders/{id}",
+                        "/senior_cashier/orders/{orderId}/{productId}", "/senior_cashier/orders/close/{id}")
                 .hasAnyAuthority(Role.CASHIER.getAuthority(), Role.SENIOR_CASHIER.getAuthority())
                 .antMatchers("/logout")
                 .hasAnyAuthority(Role.CASHIER.getAuthority(), Role.SENIOR_CASHIER.getAuthority(), Role.COMMODITY_EXPERT.getAuthority())
-                .antMatchers("/login", "/registration").anonymous()
-                .anyRequest().permitAll()
+                .antMatchers("/", "/login", "/registration").anonymous()
                 .and()
                 .formLogin()
                 .loginPage("/login");

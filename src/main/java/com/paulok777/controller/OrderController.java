@@ -2,93 +2,136 @@ package com.paulok777.controller;
 
 import com.paulok777.entity.Order;
 import com.paulok777.entity.Product;
-import com.paulok777.entity.Role;
 import com.paulok777.service.OrderService;
-import com.paulok777.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
-    private final UserService userService;
 
-    public OrderController(OrderService orderService, UserService userService) {
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
-        this.userService = userService;
     }
 
-    @GetMapping
-    public String getOrders(Model model) {
+    @GetMapping("/senior_cashier/orders")
+    public String getOrdersSeniorCashier(Model model) {
+        getOrders(model);
+        return "ordersSeniorCashier";
+    }
+
+    @GetMapping("/cashier/orders")
+    public String getOrdersCashier(Model model) {
+        getOrders(model);
+        return "ordersCashier";
+    }
+
+    private void getOrders(Model model) {
         List<Order> orders = orderService.getOrders();
         model.addAttribute("orders", orders);
-        Role role = userService.getCurrentUserRole();
-        switch (role) {
-            case CASHIER:
-                return "ordersCashier";
-            case SENIOR_CASHIER:
-                return "ordersSeniorCashier";
-            default:
-                return "main";
-        }
     }
 
-    @PostMapping
-    public String createNewOrder() {
-        Order order = orderService.saveNewOrder();
-        return "redirect:/orders/" + order.getId();
+
+    @PostMapping("/senior_cashier/orders")
+    public String createNewOrderSeniorCashier() {
+        return "redirect:/senior_cashier/orders/" + createNewOrder();
     }
 
-    @GetMapping("/{id}")
-    public String getOrderById(@PathVariable String id, Model model) {
+    @PostMapping("/cashier/orders")
+    public String createNewOrderCashier() {
+        return "redirect:/cashier/orders/" + createNewOrder();
+    }
+
+    private Long createNewOrder() {
+        return orderService.saveNewOrder().getId();
+    }
+
+    @GetMapping("/senior_cashier/orders/{id}")
+    public String getOrderByIdSeniorCashier(@PathVariable String id, Model model) {
+        getOrderById(id, model);
+        return "orderProductsSeniorCashier";
+    }
+
+    @GetMapping("/cashier/orders/{id}")
+    public String getOrderByIdCashier(@PathVariable String id, Model model) {
+        getOrderById(id, model);
+        return "orderProductsCashier";
+    }
+
+    public void getOrderById(String id, Model model) {
         Map<Long, Product> products = orderService.getProductsByOrderId(Long.valueOf(id));
         model.addAttribute("orderId", id);
         model.addAttribute("products", products);
-        Role role = userService.getCurrentUserRole();
-        switch (role) {
-            case CASHIER:
-                return "orderProductsCashier";
-            case SENIOR_CASHIER:
-                return "orderProductsSeniorCashier";
-            default:
-                return "main";
-        }
     }
 
-    @PostMapping("/{id}")
-    public String addProduct(@PathVariable String id, @RequestParam String productIdentifier,
+    @PostMapping("/senior_cashier/orders/{id}")
+    public String addProductSeniorCashier(@PathVariable String id, @RequestParam String productIdentifier,
                              @RequestParam Long amount) {
+        addProduct(id, productIdentifier, amount);
+        return "redirect:/senior_cashier/orders/" + id;
+    }
+
+    @PostMapping("/cashier/orders/{id}")
+    public String addProductCashier(@PathVariable String id, @RequestParam String productIdentifier,
+                             @RequestParam Long amount) {
+        addProduct(id, productIdentifier, amount);
+        return "redirect:/cashier/orders/" + id;
+    }
+
+    private void addProduct(String id, String productIdentifier, Long amount) {
         orderService.addProductToOrderByCodeOrName(id, productIdentifier, amount);
-        return "redirect:/orders/" + id;
     }
 
-    @PostMapping("/{orderId}/{productId}")
-    public String changeAmountOfProduct(@PathVariable String orderId, @PathVariable String productId,
+    @PostMapping("/senior_cashier/orders/{orderId}/{productId}")
+    public String changeAmountOfProductSeniorCashier(@PathVariable String orderId, @PathVariable String productId,
                                         @RequestParam Long amount) {
+        changeAmountOfProduct(orderId, productId, amount);
+        return "redirect:/senior_cashier/orders/" + orderId;
+    }
+
+    @PostMapping("/cashier/orders/{orderId}/{productId}")
+    public String changeAmountOfProductCashier(@PathVariable String orderId, @PathVariable String productId,
+                                        @RequestParam Long amount) {
+        changeAmountOfProduct(orderId, productId, amount);
+        return "redirect:/cashier/orders/" + orderId;
+    }
+
+    public void changeAmountOfProduct(String orderId, String productId, Long amount) {
         orderService.changeAmountOfProduct(orderId, productId, amount);
-        return "redirect:/orders/" + orderId;
     }
 
-    @PostMapping("/close/{id}")
-    public String closeOrder(@PathVariable String id) {
+    @PostMapping("/senior_cashier/orders/close/{id}")
+    public String closeOrderSeniorCashier(@PathVariable String id) {
+        closeOrder(id);
+        return "redirect:/senior_cashier/orders";
+    }
+
+    @PostMapping("/cashier/orders/close/{id}")
+    public String closeOrderCashier(@PathVariable String id) {
+        closeOrder(id);
+        return "redirect:/cashier/orders";
+    }
+
+    public void closeOrder(String id) {
         orderService.makeStatusClosed(id);
-        return "redirect:/orders";
     }
 
-    @PostMapping("/cancel/{id}")
+    @PostMapping("/senior_cashier/orders/cancel/{id}")
     public String cancelOrder(@PathVariable String id) {
         orderService.cancelOrder(id);
-        return "redirect:/orders";
+        return "redirect:/senior_cashier/orders";
     }
 
-    @PostMapping("/cancel/{orderId}/{productId}")
+    @PostMapping("/senior_cashier/orders/cancel/{orderId}/{productId}")
     public String cancelProduct(@PathVariable String orderId, @PathVariable String productId) {
         orderService.cancelProduct(orderId, productId);
-        return "redirect:/orders/" + orderId;
+        return "redirect:/senior_cashier/orders/" + orderId;
     }
 }

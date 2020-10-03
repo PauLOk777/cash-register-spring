@@ -4,7 +4,6 @@ import com.paulok777.dto.ProductDTO;
 import com.paulok777.entity.Measure;
 import com.paulok777.entity.Product;
 import com.paulok777.service.ProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/products")
+@RequestMapping("/commodity_expert/products")
 public class ProductController {
     private final ProductService productService;
 
@@ -31,12 +30,12 @@ public class ProductController {
     @PostMapping
     public String createProduct(ProductDTO productDTO) {
         productService.saveNewProduct(productDTO);
-        return "redirect:/products";
+        return "redirect:/commodity_expert/products";
     }
 
     @PostMapping("/{id}")
     public String changeAmountOfProduct(@RequestParam Long amount, @PathVariable String id) {
         productService.setAmountById(amount, Long.valueOf(id));
-        return "redirect:/products";
+        return "redirect:/commodity_expert/products";
     }
 }

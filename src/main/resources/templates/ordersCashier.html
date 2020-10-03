@@ -6,13 +6,16 @@
     <title>Orders</title>
 </head>
 <body>
-    <form action="/orders" method="post">
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Log Out"/>
+    </form>
+    <form action="/cashier/orders" method="post">
         <input type="submit" value="Create new order"/>
     </form>
     <div th:each="order: ${orders}">
-        <a th:href="@{/orders/} + ${order.id}">Order</a>
+        <a th:href="@{/cashier/orders/} + ${order.id}">Order</a>
         <span>[[${order}]]</span>
-        <form th:action="@{/orders/close/} + ${order.id}" method="post">
+        <form th:action="@{/cashier/orders/close/} + ${order.id}" method="post">
             <input type="submit" value="Close">
         </form>
     </div>

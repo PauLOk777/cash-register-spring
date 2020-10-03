@@ -15,8 +15,11 @@ import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public void saveNewUser(UserDTO userDTO) {
         User user = new User(userDTO);
