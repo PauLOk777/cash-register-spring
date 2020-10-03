@@ -18,7 +18,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long totalPrice;
-    private LocalDateTime createDate = LocalDateTime.now();
+    private LocalDateTime createDate;
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})

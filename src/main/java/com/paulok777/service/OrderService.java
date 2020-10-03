@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,7 @@ public class OrderService {
     public Order saveNewOrder() {
         Order order = Order.builder()
                 .totalPrice(0L)
+                .createDate(LocalDateTime.now())
                 .status(OrderStatus.NEW)
                 .user(userService.getCurrentUser())
                 .orderProducts(new HashSet<>())
