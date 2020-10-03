@@ -21,27 +21,41 @@
 </head>
 <body>
     <div th:replace="partials/seniorCashierHeader :: nav"></div>
-    <form th:action="@{/senior_cashier/orders/} + ${orderId}" method="post">
-        <input type="text" name="productIdentifier">
-        <input type="number" name="amount" value="1">
-        <input type="submit" value="Add">
-    </form>
-    <div th:each="product: ${products}">
-        <form th:action="@{/senior_cashier/orders/} + ${orderId + '/' + product.value.id}" method="post">
-            <span>[[${product}]]</span>
-            <input type="number" name="amount">
-            <input type="submit" value="Set">
+    <div class="input-form">
+        <form th:action="@{/senior_cashier/orders/} + ${orderId}" method="post">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label th:text="#{codeOrNameOfProduct} + ':'" for="productIdentifier"></label>
+                    <input type="text" name="productIdentifier" id="productIdentifier" class="form-control"/>
+                </div>
+                <div class="form-group col-md-6">
+                    <label th:text="#{amount} + ':'" for="amount"></label>
+                    <input type="number" name="amount" id="amount" class="form-control" value="1"/>
+                </div>
+            </div>
+            <div class="btn-wrapper">
+                <button type="submit" class="btn btn-primary">[[#{addProduct}]]</button>
+            </div>
         </form>
-        <form th:action="@{/senior_cashier/orders/cancel/} + ${orderId + '/' + product.value.id}" method="post">
-            <input type="submit" value="Cancel">
-        </form>
+        <div th:each="product: ${products}">
+            <form th:action="@{/senior_cashier/orders/} + ${orderId + '/' + product.value.id}" method="post">
+                <span>[[${product}]]</span>
+                <input type="number" name="amount">
+                <input type="submit" value="Set">
+            </form>
+            <form th:action="@{/senior_cashier/orders/cancel/} + ${orderId + '/' + product.value.id}" method="post">
+                <input type="submit" value="Cancel">
+            </form>
+        </div>
+        <div class="flex-sa mb-5">
+            <form th:action="@{/senior_cashier/orders/cancel/} + ${orderId}" method="post">
+                <button type="submit" class="btn btn-outline-danger btn-lg" th:text="#{closeOrder}"></button>
+            </form>
+            <form th:action="@{/senior_cashier/orders/close/} + ${orderId}" method="post">
+                <button type="submit" class="btn btn-outline-success btn-lg" th:text="#{cancelOrder}"></button>
+            </form>
+        </div>
     </div>
-    <form th:action="@{/senior_cashier/orders/cancel/} + ${orderId}" method="post">
-        <input type="submit" value="Cancel order">
-    </form>
-    <form th:action="@{/senior_cashier/orders/close/} + ${orderId}" method="post">
-        <input type="submit" value="Close order">
-    </form>
     <div th:replace="partials/footer :: footer"></div>
 </body>
 </html>

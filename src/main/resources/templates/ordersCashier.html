@@ -22,18 +22,35 @@
 <body>
     <div th:replace="partials/cashierHeader :: nav"></div>
     <div class="input-form">
-        <div class="flex-sa">
+        <div class="flex-sa mb-5">
             <form action="/cashier/orders" method="post">
                 <button type="submit" class="btn btn-primary btn-lg" th:text="#{newOrder}"></button>
             </form>
         </div>
-        <div th:each="order: ${orders}">
-            <a th:href="@{/cashier/orders/} + ${order.id}" th:text="#{order}"></a>
-            <span>[[${order}]]</span>
-            <form th:action="@{/cashier/orders/close/} + ${order.id}" method="post">
-                <input type="submit" value="Close">
-            </form>
-        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col" th:text="#{creationDate}"></th>
+                <th scope="col" th:text="#{totalPrice}"></th>
+                <th scope="col" th:text="#{closeOrder}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order: ${orders}">
+                <th scope="row">
+                    <a th:href="@{/cashier/orders/} + ${order.id}" th:text="${order.id}"></a>
+                </th>
+                <td th:text="${order.createDate}"></td>
+                <td th:text="${order.totalPrice}"></td>
+                <td>
+                    <form th:action="@{/cashier/orders/close/} + ${order.id}" method="post">
+                        <button type="submit" class="btn btn-outline-success btn-sm">[[#{close}]]</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
     <div th:replace="partials/footer :: footer"></div>
 </body>

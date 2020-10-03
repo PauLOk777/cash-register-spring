@@ -28,8 +28,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/senior_cashier/reports/z", "/senior_cashier/orders", "/senior_cashier/orders/{id}",
                         "/senior_cashier/orders/{orderId}/{productId}", "/senior_cashier/orders/close/{id}")
                 .hasAuthority(Role.SENIOR_CASHIER.getAuthority())
-                .antMatchers("/senior_cashier/orders", "/senior_cashier/orders/{id}",
-                        "/senior_cashier/orders/{orderId}/{productId}", "/senior_cashier/orders/close/{id}")
+                .antMatchers("/cashier/orders", "/cashier/orders/{id}",
+                        "/cashier/orders/{orderId}/{productId}", "/cashier/orders/close/{id}")
                 .hasAnyAuthority(Role.CASHIER.getAuthority(), Role.SENIOR_CASHIER.getAuthority())
                 .antMatchers("/logout")
                 .hasAnyAuthority(Role.CASHIER.getAuthority(), Role.SENIOR_CASHIER.getAuthority(), Role.COMMODITY_EXPERT.getAuthority())
