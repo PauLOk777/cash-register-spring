@@ -20,7 +20,7 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-    <div th:replace="fragments/cashierHeader :: header">...</div>
+    <div th:replace="partials/cashierHeader :: nav"></div>
     <form th:action="@{/cashier/orders/} + ${orderId}" method="post">
         <input type="text" name="productIdentifier">
         <input type="number" name="amount" value="1">
@@ -36,6 +36,6 @@
     <form th:action="@{/cashier/orders/close/} + ${orderId}" method="post">
         <input type="submit" value="Close order">
     </form>
-    <div th:replace="fragments/footer :: footer">...</div>
+    <div th:replace="partials/footer :: footer"></div>
 </body>
 </html>

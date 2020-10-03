@@ -20,26 +20,50 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-    <div th:replace="fragments/seniorCashierHeader :: header">...</div>
-    <form action="/senior_cashier/reports/x" method="get">
-        <input type="submit" value="X-report"/>
-    </form>
-    <form action="/senior_cashier/orders" method="post">
-        <input type="submit" value="Create new order"/>
-    </form>
-    <form action="/senior_cashier/reports/z" method="get">
-        <input type="submit" value="Z-report"/>
-    </form>
-    <div th:each="order: ${orders}">
-        <a th:href="@{/senior_cashier/orders/} + ${order.id}">Order!</a>
-        <span>[[${order}]]</span>
-        <form th:action="@{/senior_cashier/orders/cancel/} + ${order.id}" method="post">
-            <input type="submit" value="Cancel">
-        </form>
-        <form th:action="@{/senior_cashier/orders/close/} + ${order.id}" method="post">
-            <input type="submit" value="Close">
-        </form>
+    <div th:replace="partials/seniorCashierHeader :: nav"></div>
+    <div class="input-form">
+        <div class="flex-sa mb-5">
+            <form action="/senior_cashier/reports/x" method="get">
+                <button type="submit" class="btn btn-secondary btn-lg" th:text="#{report.x}"></button>
+            </form>
+            <form action="/senior_cashier/orders" method="post">
+                <button type="submit" class="btn btn-primary btn-lg" th:text="#{newOrder}"></button>
+            </form>
+            <form action="/senior_cashier/reports/z" method="get">
+                <button type="submit" class="btn btn-secondary btn-lg" th:text="#{report.z}"></button>
+            </form>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col" th:text="#{creationDate}"></th>
+                <th scope="col" th:text="#{totalPrice}"></th>
+                <th scope="col" th:text="#{cancelOrder}"></th>
+                <th scope="col" th:text="#{closeOrder}"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order: ${orders}">
+                <th scope="row">
+                    <a th:href="@{/senior_cashier/orders/} + ${order.id}" th:text="${order.id}"></a>
+                </th>
+                <td th:text="${order.createDate}"></td>
+                <td th:text="${order.totalPrice}"></td>
+                <td>
+                    <form th:action="@{/senior_cashier/orders/cancel/} + ${order.id}" method="post">
+                        <button type="submit" class="btn btn-secondary btn-sm">[[#{cancel}]]</button>
+                    </form>
+                </td>
+                <td>
+                    <form th:action="@{/senior_cashier/orders/close/} + ${order.id}" method="post">
+                        <button type="submit" class="btn btn-primary btn-sm">[[#{close}]]</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-    <div th:replace="fragments/footer :: footer">...</div>
+    <div th:replace="partials/footer :: footer"></div>
 </body>
 </html>

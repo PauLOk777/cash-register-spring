@@ -16,3 +16,8 @@ footer {
 .mr-auto {
     margin-left: auto;
 }
+
+.flex-sa {
+    display: flex;
+    justify-content: space-around;
+}

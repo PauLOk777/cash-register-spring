@@ -20,11 +20,11 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-    <div th:replace="fragments/seniorCashierHeader :: header">...</div>
+    <div th:replace="partials/seniorCashierHeader :: header"></div>
     <div>
         <span th:text="#{amount} + ': ' + ${amount}"></span>
         <span th:text="#{cash} + ': ' + ${cash}"></span>
     </div>
-    <div th:replace="fragments/footer :: footer">...</div>
+    <div th:replace="partials/footer :: footer"></div>
 </body>
 </html>

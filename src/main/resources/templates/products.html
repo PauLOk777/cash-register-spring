@@ -20,7 +20,7 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-    <div th:replace="fragments/commodityExpertHeader :: header">...</div>
+    <div th:replace="partials/commodityExpertHeader :: nav"></div>
     <form action="/commodity_expert/products" method="post">
         <label>
             Code: <input type="text" placeholder="code" name="code">
@@ -48,6 +48,6 @@
             <input type="submit" value="Set">
         </form>
     </div>
-    <div th:replace="fragments/footer :: footer">...</div>
+    <div th:replace="partials/footer :: footer"></div>
 </body>
 </html>

@@ -20,17 +20,21 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-    <div th:replace="fragments/cashierHeader :: header">...</div>
-    <form action="/cashier/orders" method="post">
-        <input type="submit" value="Create new order"/>
-    </form>
-    <div th:each="order: ${orders}">
-        <a th:href="@{/cashier/orders/} + ${order.id}" th:text="#{order}"></a>
-        <span>[[${order}]]</span>
-        <form th:action="@{/cashier/orders/close/} + ${order.id}" method="post">
-            <input type="submit" value="Close">
-        </form>
+    <div th:replace="partials/cashierHeader :: nav"></div>
+    <div class="input-form">
+        <div class="flex-sa">
+            <form action="/cashier/orders" method="post">
+                <button type="submit" class="btn btn-primary btn-lg" th:text="#{newOrder}"></button>
+            </form>
+        </div>
+        <div th:each="order: ${orders}">
+            <a th:href="@{/cashier/orders/} + ${order.id}" th:text="#{order}"></a>
+            <span>[[${order}]]</span>
+            <form th:action="@{/cashier/orders/close/} + ${order.id}" method="post">
+                <input type="submit" value="Close">
+            </form>
+        </div>
     </div>
-    <div th:replace="fragments/footer :: footer">...</div>
+    <div th:replace="partials/footer :: footer"></div>
 </body>
 </html>

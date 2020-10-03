@@ -19,7 +19,7 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-    <div th:replace="fragments/guestHeader :: nav">...</div>
+    <div th:replace="partials/guestHeader :: nav"></div>
     <div class="input-form">
         <form action="/login" method="post">
             <div class="form-group">
@@ -35,6 +35,6 @@
             </div>
         </form>
     </div>
-    <div th:replace="fragments/footer :: footer">...</div>
+    <div th:replace="partials/footer :: footer"></div>
 </body>
 </html>
