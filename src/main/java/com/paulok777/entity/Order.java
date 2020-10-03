@@ -5,10 +5,10 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode(exclude = {"orderProducts"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -33,22 +33,4 @@ public class Order {
         this.user = user;
         orderProducts = new HashSet<>();
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Order order = (Order) o;
-        return Objects.equals(id, order.id) &&
-                Objects.equals(totalPrice, order.totalPrice) &&
-                Objects.equals(createDate, order.createDate) &&
-                status == order.status &&
-                Objects.equals(user, order.user);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, totalPrice, createDate, status, user);
-    }
-
 }
