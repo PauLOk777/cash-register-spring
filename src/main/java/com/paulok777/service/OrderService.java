@@ -2,6 +2,7 @@ package com.paulok777.service;
 
 import com.paulok777.entity.*;
 import com.paulok777.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -9,24 +10,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
     private final UserService userService;
     private final ProductService productService;
 
-    public OrderService(OrderRepository orderRepository, UserService userService, ProductService productService) {
-        this.orderRepository = orderRepository;
-        this.userService = userService;
-        this.productService = productService;
-    }
-
     public List<Order> getOrders() {
-        return orderRepository.findByStatus(OrderStatus.NEW);
+        return orderRepository.findByStatusOrderByCreateDateDesc(OrderStatus.NEW);
     }
 
     public Order saveNewOrder() {
-        User user = userService.getCurrentUser();
-        return orderRepository.save(new Order(user));
+        Order order = Order.builder()
+                .totalPrice(0L)
+                .status(OrderStatus.NEW)
+                .user(userService.getCurrentUser())
+                .orderProducts(new HashSet<>())
+                .build();
+        return orderRepository.save(order);
     }
 
     @Transactional
@@ -70,12 +71,8 @@ public class OrderService {
         }
 
         orderProducts.setAmount(amount);
-
-        long totalPrice = order.getTotalPrice();
-        order.setTotalPrice(totalPrice + product.getPrice() * amount);
-
-        long productAmount = product.getAmount();
-        product.setAmount(productAmount - amount);
+        order.setTotalPrice(order.getTotalPrice() + product.getPrice() * amount);
+        product.setAmount(product.getAmount() - amount);
 
         order.getOrderProducts().add(orderProducts);
         product.getOrderProducts().add(orderProducts);
@@ -180,5 +177,11 @@ public class OrderService {
                 .stream()
                 .filter(orderProduct -> product.getId().equals(orderProduct.getProduct().getId()))
                 .collect(Collectors.toSet());
+    }
+
+    public Map<String, Long> getReportInfo() {
+        Map<String, Long> reportInfo = new HashMap<>();
+
+        return reportInfo;
     }
 }

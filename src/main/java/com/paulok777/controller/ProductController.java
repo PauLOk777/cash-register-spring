@@ -4,6 +4,7 @@ import com.paulok777.dto.ProductDTO;
 import com.paulok777.entity.Measure;
 import com.paulok777.entity.Product;
 import com.paulok777.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,12 +13,9 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/commodity_expert/products")
+@RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
 
     @GetMapping
     public String getProducts(Model model) {

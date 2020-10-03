@@ -16,5 +16,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("update orders o set o.status = :status where o.id = :id")
     void changeStatusToClosed(@Param(value = "id") Long id, @Param(value = "status") OrderStatus status);
 
-    List<Order> findByStatus(@Param(value = "status") OrderStatus status);
+    List<Order> findByStatusOrderByCreateDateDesc(@Param(value = "status") OrderStatus status);
 }

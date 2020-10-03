@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Order products</title>
+    <title>Reports</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
@@ -20,22 +20,11 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-    <div th:replace="fragments/cashierHeader :: header">...</div>
-    <form th:action="@{/cashier/orders/} + ${orderId}" method="post">
-        <input type="text" name="productIdentifier">
-        <input type="number" name="amount" value="1">
-        <input type="submit" value="Add">
-    </form>
-    <div th:each="product: ${products}">
-        <form th:action="@{/cashier/orders/} + ${orderId + '/' + product.value.id}" method="post">
-            <span>[[${product}]]</span>
-            <input type="number" name="amount">
-            <input type="submit" value="Set">
-        </form>
+    <div th:replace="fragments/seniorCashierHeader :: header">...</div>
+    <div>
+        <span th:text="#{amount} + ': ' + ${amount}"></span>
+        <span th:text="#{cash} + ': ' + ${cash}"></span>
     </div>
-    <form th:action="@{/cashier/orders/close/} + ${orderId}" method="post">
-        <input type="submit" value="Close order">
-    </form>
     <div th:replace="fragments/footer :: footer">...</div>
 </body>
 </html>

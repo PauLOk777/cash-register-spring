@@ -3,6 +3,7 @@ package com.paulok777.controller;
 import com.paulok777.entity.Order;
 import com.paulok777.entity.Product;
 import com.paulok777.service.OrderService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,12 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
-
-    public OrderController(OrderService orderService) {
-        this.orderService = orderService;
-    }
 
     @GetMapping("/senior_cashier/orders")
     public String getOrdersSeniorCashier(Model model) {

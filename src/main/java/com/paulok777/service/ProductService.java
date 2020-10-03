@@ -3,6 +3,7 @@ package com.paulok777.service;
 import com.paulok777.dto.ProductDTO;
 import com.paulok777.entity.Product;
 import com.paulok777.repository.ProductRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,12 +11,9 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-
-    public ProductService(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
 
     public List<Product> getProducts() {
         return productRepository.findAll();
