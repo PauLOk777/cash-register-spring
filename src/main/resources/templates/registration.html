@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Registration</title>
 </head>
 <body>
+    <div th:replace="fragments/guestHeader :: header">...</div>
     <p>Registration page</p>
-<!--    <p th:if="${error_message}">${error_message}</p>-->
     <form action="/registration"  method="post">
         <div><label> First name : <input type="text" name="firstName"/></label></div>
         <div><label> Last name : <input type="text" name="lastName"/></label></div>
@@ -14,7 +14,7 @@
         <div><label> Phone number : <input type="tel" name="phoneNumber"></label></div>
         <div><label> Username(your login) : <input type="text" name="username"/></label></div>
         <div><label> Password: <input type="password" name="password"></label></div>
-        <div>
+        <div><label for="role">Position: </label>
             <select name="role" id="role">
                 <option th:each="position: ${positions}" th:value="${position.name()}">
                     [[${position.name()}]]
@@ -23,6 +23,6 @@
         </div>
         <div><input type="submit" value="Registration"/></div>
     </form>
-    <a href="/login">Login</a>
+    <div th:replace="fragments/footer :: footer">...</div>
 </body>
 </html>

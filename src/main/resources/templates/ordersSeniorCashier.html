@@ -6,9 +6,7 @@
     <title>Orders</title>
 </head>
 <body>
-    <form th:action="@{/logout}" method="post">
-        <input type="submit" value="Log Out"/>
-    </form>
+    <div th:replace="fragments/seniorCashierHeader :: header">...</div>
     <form action="/senior_cashier/reports/x" method="get">
         <input type="submit" value="X-report"/>
     </form>
@@ -28,5 +26,6 @@
             <input type="submit" value="Close">
         </form>
     </div>
+    <div th:replace="fragments/footer :: footer">...</div>
 </body>
 </html>

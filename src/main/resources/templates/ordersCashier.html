@@ -6,9 +6,7 @@
     <title>Orders</title>
 </head>
 <body>
-    <form th:action="@{/logout}" method="post">
-        <input type="submit" value="Log Out"/>
-    </form>
+    <div th:replace="fragments/cashierHeader :: header">...</div>
     <form action="/cashier/orders" method="post">
         <input type="submit" value="Create new order"/>
     </form>
@@ -19,5 +17,6 @@
             <input type="submit" value="Close">
         </form>
     </div>
+    <div th:replace="fragments/footer :: footer">...</div>
 </body>
 </html>

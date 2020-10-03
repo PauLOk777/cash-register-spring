@@ -30,14 +30,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 
-    public Role getCurrentUserRole() {
-        Set<Role> roles = getCurrentUser().getRoles();
-        for (Role role: roles) {
-            return role;
-        }
-        return null;
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username);

@@ -57,5 +57,4 @@ public class Product {
     public int hashCode() {
         return Objects.hash(id, code, name, price, amount, measure);
     }
-
 }
