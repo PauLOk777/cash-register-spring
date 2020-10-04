@@ -4,6 +4,8 @@ import com.paulok777.entity.Order;
 import com.paulok777.entity.Product;
 import com.paulok777.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@Log4j2
 @RequiredArgsConstructor
 public class OrderController {
     private final OrderService orderService;
@@ -48,7 +51,11 @@ public class OrderController {
     }
 
     private Long createNewOrder() {
-        return orderService.saveNewOrder().getId();
+        log.info("(username: {}) create new order", SecurityContextHolder.getContext().getAuthentication().getName());
+        long id = orderService.saveNewOrder().getId();
+        log.info("(username: {}) new order id: {}", id,
+                SecurityContextHolder.getContext().getAuthentication().getName());
+        return id;
     }
 
     @GetMapping("/senior_cashier/orders/{id}")
@@ -64,6 +71,8 @@ public class OrderController {
     }
 
     public void getOrderById(String id, Model model) {
+        log.info("(username: {}) get order by id: {}", id,
+                SecurityContextHolder.getContext().getAuthentication().getName());
         Map<Long, Product> products = orderService.getProductsByOrderId(id);
         model.addAttribute("orderId", id);
         model.addAttribute("products", products);
@@ -84,6 +93,8 @@ public class OrderController {
     }
 
     private void addProduct(String id, String productIdentifier, Long amount) {
+        log.info("(username: {}) add product (code or name:{}) to order (id:{}) in amount: {}",
+                productIdentifier, id, amount, SecurityContextHolder.getContext().getAuthentication().getName());
         orderService.addProductToOrderByCodeOrName(id, productIdentifier, amount);
     }
 
@@ -102,6 +113,8 @@ public class OrderController {
     }
 
     public void changeAmountOfProduct(String orderId, String productId, Long amount) {
+        log.info("(username: {}) change product amount (id:{}) to order (id:{}) to: {}",
+                productId, orderId, amount, SecurityContextHolder.getContext().getAuthentication().getName());
         orderService.changeAmountOfProduct(orderId, productId, amount);
     }
 
@@ -118,17 +131,23 @@ public class OrderController {
     }
 
     public void closeOrder(String id) {
+        log.info("(username: {}) close order (id:{})", id,
+                SecurityContextHolder.getContext().getAuthentication().getName());
         orderService.makeStatusClosed(id);
     }
 
     @PostMapping("/senior_cashier/orders/cancel/{id}")
     public String cancelOrder(@PathVariable String id) {
+        log.info("(username: {}) cancel order (id:{})", id,
+                SecurityContextHolder.getContext().getAuthentication().getName());
         orderService.cancelOrder(id);
         return "redirect:/senior_cashier/orders";
     }
 
     @PostMapping("/senior_cashier/orders/cancel/{orderId}/{productId}")
     public String cancelProduct(@PathVariable String orderId, @PathVariable String productId) {
+        log.info("(username: {}) cancel product (id:{}) in order (id:{})",
+                productId, orderId, SecurityContextHolder.getContext().getAuthentication().getName());
         orderService.cancelProduct(orderId, productId);
         return "redirect:/senior_cashier/orders/" + orderId;
     }

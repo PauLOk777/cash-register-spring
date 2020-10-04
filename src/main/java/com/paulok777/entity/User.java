@@ -16,6 +16,10 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name="users")
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"code"}),
+        @UniqueConstraint(columnNames = {"name"})
+})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)

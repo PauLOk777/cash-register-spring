@@ -1,8 +1,13 @@
 package com.paulok777.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class UserDTO {
     private String username;
     private String password;

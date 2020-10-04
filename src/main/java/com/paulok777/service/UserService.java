@@ -4,24 +4,31 @@ import com.paulok777.dto.UserDTO;
 import com.paulok777.entity.User;
 import com.paulok777.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Log4j2
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public void saveNewUser(UserDTO userDTO) {
         User user = new User(userDTO);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     public User getCurrentUser() {
-        return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow();
+        return userRepository.findByUsername(
+                SecurityContextHolder.getContext().getAuthentication().getName()
+        ).orElseThrow();
     }
 
     @Override

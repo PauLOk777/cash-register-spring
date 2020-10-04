@@ -4,6 +4,8 @@ import com.paulok777.dto.ReportDTO;
 import com.paulok777.entity.*;
 import com.paulok777.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -12,6 +14,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Log4j2
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
@@ -36,6 +39,8 @@ public class OrderService {
     public Map<Long, Product> getProductsByOrderId(String id) {
         Order order = getOrderById(id);
         if (!order.getStatus().equals(OrderStatus.NEW)) {
+            log.warn("(username: {}) Order was closed or canceled.",
+                    SecurityContextHolder.getContext().getAuthentication().getName());
             throw new IllegalArgumentException("Order was closed or canceled");
         }
 
@@ -45,9 +50,7 @@ public class OrderService {
                 .sorted(Comparator.comparing(op -> op.getProduct().getName()))
                 .collect(Collectors.toMap(
                         OrderProducts::getAmount, OrderProducts::getProduct,
-                        (x, y) -> y, LinkedHashMap::new
-                        )
-                );
+                        (x, y) -> y, LinkedHashMap::new));
     }
 
     @Transactional
@@ -90,12 +93,18 @@ public class OrderService {
 
         Optional<OrderProducts> orderProductsOptional = orderProductsSet.stream().findFirst();
         OrderProducts orderProducts = orderProductsOptional.orElseThrow();
-        if (orderProducts.getAmount() < 1) throw new IllegalArgumentException("Product was removed from order");
+        if (orderProducts.getAmount() < 1) {
+            log.warn("(username: {}) Product was removed from order.",
+                    SecurityContextHolder.getContext().getAuthentication().getName());
+            throw new IllegalArgumentException("Product was removed from order");
+        }
 
         long prevAmount = orderProducts.getAmount();
 
         if (prevAmount + product.getAmount() < amount) {
-            throw new IllegalArgumentException("No so many products.");
+            log.warn("(username: {}) No so many products at storage.",
+                    SecurityContextHolder.getContext().getAuthentication().getName());
+            throw new IllegalArgumentException("No so many products at storage.");
         }
 
         order.getOrderProducts().remove(orderProducts);

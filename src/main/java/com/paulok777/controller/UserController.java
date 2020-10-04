@@ -4,14 +4,16 @@ import com.paulok777.dto.UserDTO;
 import com.paulok777.entity.Role;
 import com.paulok777.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
+@Log4j2
 @RequiredArgsConstructor
-public class MainController {
+public class UserController {
     private final UserService userService;
 
     @GetMapping("/registration")
@@ -22,6 +24,7 @@ public class MainController {
 
     @PostMapping("/registration")
     public String addUser(UserDTO userDTO) {
+        log.info("{}", userDTO);
         userService.saveNewUser(userDTO);
         return "redirect:/login";
     }
