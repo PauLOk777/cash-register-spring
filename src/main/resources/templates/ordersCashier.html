@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Orders</title>
+    <title>Active orders</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
@@ -18,8 +18,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
             integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
             crossorigin="anonymous"></script>
+    <script type="text/javascript" th:src="@{/js/convertCoinsToBill.js}"></script>
 </head>
-<body>
+<body onload="convertCoinsToBill()">
     <div th:replace="partials/cashierHeader :: nav"></div>
     <div class="input-form">
         <div class="flex-sa mb-5">
@@ -42,7 +43,7 @@
                     <a th:href="@{/cashier/orders/} + ${order.id}" th:text="${order.id}"></a>
                 </th>
                 <td th:text="${order.createDate}"></td>
-                <td th:text="${order.totalPrice}"></td>
+                <td th:text="${order.totalPrice}" class="priceToParse"></td>
                 <td>
                     <form th:action="@{/cashier/orders/close/} + ${order.id}" method="post">
                         <button type="submit" class="btn btn-outline-success btn-sm">[[#{close}]]</button>

@@ -66,13 +66,14 @@ public class OrderService {
             orderProducts = orderProductsOptional.orElseThrow();
             order.getOrderProducts().remove(orderProducts);
             product.getOrderProducts().remove(orderProducts);
+            orderProducts.setAmount(amount + orderProducts.getAmount());
         } else {
             orderProducts = new OrderProducts();
             orderProducts.setOrder(order);
             orderProducts.setProduct(product);
+            orderProducts.setAmount(amount);
         }
 
-        orderProducts.setAmount(amount);
         order.setTotalPrice(order.getTotalPrice() + product.getPrice() * amount);
         product.setAmount(product.getAmount() - amount);
 
