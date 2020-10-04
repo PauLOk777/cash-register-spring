@@ -22,7 +22,7 @@
 </head>
 <body onload="convertCoinsToBill()">
     <div th:replace="partials/cashierHeader :: nav"></div>
-    <div class="input-form">
+    <div class="content-form">
         <div class="mb-5">
             <form th:action="@{/cashier/orders/} + ${orderId}" method="post">
                 <div class="form-row">
@@ -42,13 +42,13 @@
         </div>
         <div class="mb-5">
             <table class="table">
-                <thead>
+                <thead class="thead-light">
                 <tr>
                     <th scope="col" th:text="#{code}"></th>
                     <th scope="col" th:text="#{name}"></th>
                     <th scope="col" th:text="#{price} + #{priceBy}"></th>
                     <th scope="col" th:text="#{measure}"></th>
-                    <th scope="col" th:text="#{amount}"></th>
+                    <th scope="col" th:text="#{amount} + #{amountWeight}"></th>
                     <th scope="col" th:text="#{setNewAmount}"></th>
                 </tr>
                 </thead>

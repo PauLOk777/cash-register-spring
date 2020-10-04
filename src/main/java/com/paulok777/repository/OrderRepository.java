@@ -17,4 +17,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     void changeStatusToClosed(@Param(value = "id") Long id, @Param(value = "status") OrderStatus status);
 
     List<Order> findByStatusOrderByCreateDateDesc(@Param(value = "status") OrderStatus status);
+
+    List<Order> findByStatus(OrderStatus status);
 }

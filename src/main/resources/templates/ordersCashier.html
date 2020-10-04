@@ -22,14 +22,14 @@
 </head>
 <body onload="convertCoinsToBill()">
     <div th:replace="partials/cashierHeader :: nav"></div>
-    <div class="input-form">
+    <div class="content-form">
         <div class="flex-sa mb-5">
             <form action="/cashier/orders" method="post">
                 <button type="submit" class="btn btn-primary btn-lg" th:text="#{newOrder}"></button>
             </form>
         </div>
         <table class="table">
-            <thead>
+            <thead class="thead-light">
             <tr>
                 <th scope="col">#</th>
                 <th scope="col" th:text="#{creationDate}"></th>

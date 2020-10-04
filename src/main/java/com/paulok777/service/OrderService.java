@@ -1,5 +1,6 @@
 package com.paulok777.service;
 
+import com.paulok777.dto.ReportDTO;
 import com.paulok777.entity.*;
 import com.paulok777.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -178,9 +179,32 @@ public class OrderService {
                 .collect(Collectors.toSet());
     }
 
-    public Map<String, Long> getReportInfo() {
-        Map<String, Long> reportInfo = new HashMap<>();
+    public ReportDTO makeXReport() {
+        List<Order> orders = orderRepository.findByStatus(OrderStatus.CLOSED);
+        return getReportInfo(orders);
+    }
 
-        return reportInfo;
+    public ReportDTO makeZReport() {
+        List<Order> orders = orderRepository.findByStatus(OrderStatus.CLOSED);
+        archiveOrders(orders);
+        return getReportInfo(orders);
+    }
+
+    private ReportDTO getReportInfo(List<Order> orders) {
+        return ReportDTO.builder()
+                .amount((long) orders.size())
+                .totalPrice(
+                        orders.stream()
+                        .map(Order::getTotalPrice)
+                        .reduce(0L, Long::sum))
+                .build();
+    }
+
+    @Transactional
+    public void archiveOrders(List<Order> orders) {
+        orders.forEach(order -> {
+            order.setStatus(OrderStatus.ARCHIVED);
+            orderRepository.save(order);
+        });
     }
 }
