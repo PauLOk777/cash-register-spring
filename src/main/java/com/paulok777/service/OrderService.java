@@ -32,25 +32,21 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    @Transactional
-    public Map<Long, Product> getProductsByOrderId(Long id) {
-        Optional<Order> order = orderRepository.findById(id);
-        Order currOrder = order.orElseThrow();
-        if (!currOrder.getStatus().equals(OrderStatus.NEW)) {
+    public Map<Long, Product> getProductsByOrderId(String id) {
+        Order order = getOrderById(id);
+        if (!order.getStatus().equals(OrderStatus.NEW)) {
             throw new IllegalArgumentException("Order was closed or canceled");
         }
 
-        Set<OrderProducts> orderProductsSet =
-                currOrder.getOrderProducts()
+         return order.getOrderProducts()
                 .stream()
                 .filter(orderProducts -> orderProducts.getAmount() > 0)
-                .collect(Collectors.toSet());
-
-        Map<Long, Product> products = new HashMap<>();
-        for (OrderProducts orderProduct: orderProductsSet) {
-            products.put(orderProduct.getAmount(), orderProduct.getProduct());
-        }
-        return products;
+                .sorted(Comparator.comparing(op -> op.getProduct().getName()))
+                .collect(Collectors.toMap(
+                        OrderProducts::getAmount, OrderProducts::getProduct,
+                        (x, y) -> y, LinkedHashMap::new
+                        )
+                );
     }
 
     @Transactional

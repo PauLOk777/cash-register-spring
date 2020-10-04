@@ -27,6 +27,7 @@ public class ProductController {
 
     @PostMapping
     public String createProduct(ProductDTO productDTO) {
+        System.out.println(productDTO);
         productService.saveNewProduct(productDTO);
         return "redirect:/commodity_expert/products";
     }

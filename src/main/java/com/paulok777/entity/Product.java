@@ -14,11 +14,17 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity(name = "products")
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"code"}),
+        @UniqueConstraint(columnNames = {"name"})
+})
 public class Product {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, name = "code")
     private String code;
+    @Column(unique = true, name = "name")
     private String name;
     private Integer price;
     private Long amount;

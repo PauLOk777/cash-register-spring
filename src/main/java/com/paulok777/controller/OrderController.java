@@ -64,7 +64,7 @@ public class OrderController {
     }
 
     public void getOrderById(String id, Model model) {
-        Map<Long, Product> products = orderService.getProductsByOrderId(Long.valueOf(id));
+        Map<Long, Product> products = orderService.getProductsByOrderId(id);
         model.addAttribute("orderId", id);
         model.addAttribute("products", products);
     }
