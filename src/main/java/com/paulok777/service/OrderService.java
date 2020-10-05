@@ -98,15 +98,6 @@ public class OrderService {
         return orderProducts;
     }
 
-    private void checkProductAmount(Long amount, Long productAmount) {
-        if (productAmount < amount) {
-            log.warn("(username: {}) {}.",
-                    userService.getCurrentUser().getUsername(), ExceptionKeys.NOT_ENOUGH_PRODUCTS);
-            throw new NotEnoughProductsException(ExceptionKeys.NOT_ENOUGH_PRODUCTS);
-        }
-    }
-
-    // try to fix
     @Transactional
     public void changeAmountOfProduct(String orderId, String productId, Long amount) {
         Order order = getOrderById(orderId);
@@ -114,35 +105,45 @@ public class OrderService {
 
         OrderProducts orderProducts = parseOptionalAndThrowInvalidId(getOptionalOrderProducts(order, product));
 
+        checkIllegalOrderStateProductCanceled(orderProducts);
+        checkProductAmount(amount, orderProducts.getAmount() + product.getAmount());
+
+        calculateDataAfterChangingAmount(amount, order, product, orderProducts);
+
+        orderRepository.save(order);
+        productService.saveProduct(product);
+    }
+
+    private void calculateDataAfterChangingAmount(Long amount, Order order, Product product, OrderProducts orderProducts) {
+        long differenceInAmount = amount - orderProducts.getAmount();
+        long differenceIntPrice = differenceInAmount * product.getPrice();
+
+        order.getOrderProducts().remove(orderProducts);
+        product.getOrderProducts().remove(orderProducts);
+
+        orderProducts.setAmount(amount);
+
+        order.setTotalPrice(order.getTotalPrice() + differenceIntPrice);
+        product.setAmount(product.getAmount() - differenceInAmount);
+
+        order.getOrderProducts().add(orderProducts);
+        product.getOrderProducts().add(orderProducts);
+    }
+
+    private void checkIllegalOrderStateProductCanceled(OrderProducts orderProducts) {
         if (orderProducts.getAmount() < 1) {
             log.warn("(username: {}) {}.",
                     userService.getCurrentUser().getUsername(), ExceptionKeys.ILLEGAL_ORDER_STATE_PRODUCT_CANCELED);
             throw new NoSuchProductException(ExceptionKeys.ILLEGAL_ORDER_STATE_PRODUCT_CANCELED);
         }
+    }
 
-        long prevAmount = orderProducts.getAmount();
-
-        if (prevAmount + product.getAmount() < amount) {
+    private void checkProductAmount(Long amount, Long productAmount) {
+        if (productAmount < amount) {
             log.warn("(username: {}) {}.",
                     userService.getCurrentUser().getUsername(), ExceptionKeys.NOT_ENOUGH_PRODUCTS);
             throw new NotEnoughProductsException(ExceptionKeys.NOT_ENOUGH_PRODUCTS);
         }
-
-        order.getOrderProducts().remove(orderProducts);
-        product.getOrderProducts().remove(orderProducts);
-        orderProducts.setAmount(amount);
-
-        long differenceInAmount = amount - prevAmount;
-        long differenceIntPrice = differenceInAmount * product.getPrice();
-
-        order.setTotalPrice(order.getTotalPrice() + differenceIntPrice);
-        order.getOrderProducts().add(orderProducts);
-
-        product.setAmount(product.getAmount() - differenceInAmount);
-        product.getOrderProducts().add(orderProducts);
-
-        orderRepository.save(order);
-        productService.saveProduct(product);
     }
 
     public void makeStatusClosed(String id) {
