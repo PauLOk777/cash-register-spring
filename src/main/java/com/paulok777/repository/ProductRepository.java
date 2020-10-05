@@ -1,6 +1,7 @@
 package com.paulok777.repository;
 
 import com.paulok777.entity.Product;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,5 +21,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findByName(String name);
 
-    List<Product> findByOrderByName();
+    List<Product> findByOrderByName(Pageable pageable);
 }

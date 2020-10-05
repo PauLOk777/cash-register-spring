@@ -1,16 +1,18 @@
 package com.paulok777.service;
 
 import com.paulok777.dto.ReportDTO;
-import com.paulok777.entity.*;
-import com.paulok777.exception.orderExc.IllegalOrderStateException;
-import com.paulok777.exception.InvalidIdException;
-import com.paulok777.exception.orderExc.NoSuchProductException;
-import com.paulok777.exception.productExc.NotEnoughProductsException;
+import com.paulok777.entity.Order;
+import com.paulok777.entity.OrderProducts;
+import com.paulok777.entity.OrderStatus;
+import com.paulok777.entity.Product;
+import com.paulok777.exception.cashRegisterExc.InvalidIdException;
+import com.paulok777.exception.cashRegisterExc.orderExc.IllegalOrderStateException;
+import com.paulok777.exception.cashRegisterExc.orderExc.NoSuchProductException;
+import com.paulok777.exception.cashRegisterExc.productExc.NotEnoughProductsException;
 import com.paulok777.repository.OrderRepository;
 import com.paulok777.util.ExceptionKeys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -46,8 +48,7 @@ public class OrderService {
         Order order = getOrderById(id);
         if (!order.getStatus().equals(OrderStatus.NEW)) {
             log.warn("(username: {}) {}.",
-                    SecurityContextHolder.getContext().getAuthentication().getName(),
-                    ExceptionKeys.ILLEGAL_ORDER_STATE);
+                    userService.getCurrentUser().getUsername(), ExceptionKeys.ILLEGAL_ORDER_STATE);
             throw new IllegalOrderStateException(ExceptionKeys.ILLEGAL_ORDER_STATE);
         }
 
@@ -65,50 +66,57 @@ public class OrderService {
         Order order = getOrderById(orderId);
         Product product = productService.findByIdentifier(productIdentifier);
 
-        if (product.getAmount() < amount) {
-            log.warn("(username: {}) {}.",
-                    SecurityContextHolder.getContext().getAuthentication().getName(),
-                    ExceptionKeys.NOT_ENOUGH_PRODUCTS);
-            throw new NotEnoughProductsException(ExceptionKeys.NOT_ENOUGH_PRODUCTS);
-        }
+        addProductToOrder(amount, order, product);
 
-        Set<OrderProducts> orderProductsSet = getOrderProductSet(order, product);
-        OrderProducts orderProducts;
+        orderRepository.save(order);
+        productService.saveProduct(product);
+    }
 
-        if (orderProductsSet.size() > 0) {
-            orderProducts = parseOptionalAndThrowInvalidId(orderProductsSet.stream().findFirst());
-            order.getOrderProducts().remove(orderProducts);
-            product.getOrderProducts().remove(orderProducts);
-            orderProducts.setAmount(amount + orderProducts.getAmount());
-        } else {
-            orderProducts = new OrderProducts();
-            orderProducts.setOrder(order);
-            orderProducts.setProduct(product);
-            orderProducts.setAmount(amount);
-        }
+    private void addProductToOrder(Long amount, Order order, Product product) {
+        checkProductAmount(amount, product.getAmount());
+
+        OrderProducts orderProducts = createOrderProducts(amount, order, product);
 
         order.setTotalPrice(order.getTotalPrice() + product.getPrice() * amount);
         product.setAmount(product.getAmount() - amount);
 
         order.getOrderProducts().add(orderProducts);
         product.getOrderProducts().add(orderProducts);
-
-        orderRepository.save(order);
-        productService.saveProduct(product);
     }
 
+    private OrderProducts createOrderProducts(Long amount, Order order, Product product) {
+        OrderProducts orderProducts = getOrderProducts(order, product);
+
+        if (orderProducts.getAmount() > 0) {
+            order.getOrderProducts().remove(orderProducts);
+            product.getOrderProducts().remove(orderProducts);
+            orderProducts.setAmount(amount + orderProducts.getAmount());
+        } else {
+            orderProducts.setAmount(amount);
+        }
+
+        return orderProducts;
+    }
+
+    private void checkProductAmount(Long amount, Long productAmount) {
+        if (productAmount < amount) {
+            log.warn("(username: {}) {}.",
+                    userService.getCurrentUser().getUsername(), ExceptionKeys.NOT_ENOUGH_PRODUCTS);
+            throw new NotEnoughProductsException(ExceptionKeys.NOT_ENOUGH_PRODUCTS);
+        }
+    }
+
+    // try to fix
     @Transactional
     public void changeAmountOfProduct(String orderId, String productId, Long amount) {
         Order order = getOrderById(orderId);
         Product product = getProductById(productId);
 
-        OrderProducts orderProducts = parseOptionalAndThrowInvalidId(
-                getOrderProductSet(order, product).stream().findFirst());
+        OrderProducts orderProducts = parseOptionalAndThrowInvalidId(getOptionalOrderProducts(order, product));
 
         if (orderProducts.getAmount() < 1) {
             log.warn("(username: {}) {}.",
-                    SecurityContextHolder.getContext().getAuthentication().getName(),
-                    ExceptionKeys.ILLEGAL_ORDER_STATE_PRODUCT_CANCELED);
+                    userService.getCurrentUser().getUsername(), ExceptionKeys.ILLEGAL_ORDER_STATE_PRODUCT_CANCELED);
             throw new NoSuchProductException(ExceptionKeys.ILLEGAL_ORDER_STATE_PRODUCT_CANCELED);
         }
 
@@ -116,8 +124,7 @@ public class OrderService {
 
         if (prevAmount + product.getAmount() < amount) {
             log.warn("(username: {}) {}.",
-                    SecurityContextHolder.getContext().getAuthentication().getName(),
-                    ExceptionKeys.NOT_ENOUGH_PRODUCTS);
+                    userService.getCurrentUser().getUsername(), ExceptionKeys.NOT_ENOUGH_PRODUCTS);
             throw new NotEnoughProductsException(ExceptionKeys.NOT_ENOUGH_PRODUCTS);
         }
 
@@ -143,8 +150,7 @@ public class OrderService {
             orderRepository.changeStatusToClosed(Long.valueOf(id), OrderStatus.CLOSED);
         } catch (NumberFormatException e) {
             log.warn("(username: {}) {}}.",
-                    SecurityContextHolder.getContext().getAuthentication().getName(),
-                    ExceptionKeys.INVALID_ID_EXCEPTION);
+                    userService.getCurrentUser().getUsername(), ExceptionKeys.INVALID_ID_EXCEPTION);
             throw new InvalidIdException(ExceptionKeys.INVALID_ID_EXCEPTION);
         }
     }
@@ -168,8 +174,7 @@ public class OrderService {
         Order order = getOrderById(orderId);
         Product product = getProductById(productId);
 
-        OrderProducts orderProducts = parseOptionalAndThrowInvalidId(
-                getOrderProductSet(order, product).stream().findFirst());
+        OrderProducts orderProducts = parseOptionalAndThrowInvalidId(getOptionalOrderProducts(order, product));
 
         order.getOrderProducts().remove(orderProducts);
         product.getOrderProducts().remove(orderProducts);
@@ -190,8 +195,7 @@ public class OrderService {
             return parseOptionalAndThrowInvalidId(orderRepository.findById(Long.parseLong(id)));
         } catch (NumberFormatException e) {
             log.warn("(username: {}) {}}.",
-                    SecurityContextHolder.getContext().getAuthentication().getName(),
-                    ExceptionKeys.INVALID_ID_EXCEPTION);
+                    userService.getCurrentUser().getUsername(), ExceptionKeys.INVALID_ID_EXCEPTION);
             throw new InvalidIdException("Invalid value for order id.");
         }
     }
@@ -201,8 +205,7 @@ public class OrderService {
             return parseOptionalAndThrowInvalidId(productService.findById(Long.parseLong(id)));
         } catch (NumberFormatException e) {
             log.warn("(username: {}) {}}.",
-                    SecurityContextHolder.getContext().getAuthentication().getName(),
-                    ExceptionKeys.INVALID_ID_EXCEPTION);
+                    userService.getCurrentUser().getUsername(), ExceptionKeys.INVALID_ID_EXCEPTION);
             throw new InvalidIdException("Invalid value for order id.");
         }
     }
@@ -210,18 +213,32 @@ public class OrderService {
     private <T> T parseOptionalAndThrowInvalidId(Optional<T> optional) {
         return optional.orElseThrow(() -> {
             log.warn("(username: {}) {}}.",
-                    SecurityContextHolder.getContext().getAuthentication().getName(),
+                    userService.getCurrentUser().getUsername(),
                     ExceptionKeys.INVALID_ID_EXCEPTION);
             throw new InvalidIdException("Invalid value for order id.");
         });
     }
 
-    private Set<OrderProducts> getOrderProductSet(Order order, Product product) {
+    private Optional<OrderProducts> getOptionalOrderProducts(Order order, Product product) {
         return order
                 .getOrderProducts()
                 .stream()
                 .filter(orderProduct -> product.getId().equals(orderProduct.getProduct().getId()))
-                .collect(Collectors.toSet());
+                .findFirst();
+    }
+
+    private OrderProducts getOrderProducts(Order order, Product product) {
+        return order
+                .getOrderProducts()
+                .stream()
+                .filter(orderProduct -> product.getId().equals(orderProduct.getProduct().getId()))
+                .findFirst().orElseGet(() -> {
+                    OrderProducts orderProducts = new OrderProducts();
+                    orderProducts.setOrder(order);
+                    orderProducts.setProduct(product);
+                    orderProducts.setAmount(0L);
+                    return orderProducts;
+                });
     }
 
     public ReportDTO makeXReport() {

@@ -2,7 +2,7 @@ package com.paulok777.service;
 
 import com.paulok777.dto.UserDTO;
 import com.paulok777.entity.User;
-import com.paulok777.exception.registrationExc.DuplicateUsernameException;
+import com.paulok777.exception.cashRegisterExc.registrationExc.DuplicateUsernameException;
 import com.paulok777.repository.UserRepository;
 import com.paulok777.util.ExceptionKeys;
 import lombok.RequiredArgsConstructor;

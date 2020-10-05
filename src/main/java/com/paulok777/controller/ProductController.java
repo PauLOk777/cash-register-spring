@@ -6,6 +6,7 @@ import com.paulok777.entity.Product;
 import com.paulok777.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +23,7 @@ public class ProductController {
 
     @GetMapping
     public String getProducts(Model model) {
-        List<Product> products = productService.getProducts();
+        List<Product> products = productService.getProducts(PageRequest.of(0, 3));
         model.addAttribute("measures", Measure.values());
         model.addAttribute("products", products);
         return "products";
