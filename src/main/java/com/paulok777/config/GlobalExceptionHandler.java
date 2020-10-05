@@ -14,10 +14,12 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
     private final MessageSource messageSource;
+    private final String warning = "warning";
 
     @ExceptionHandler
     public <T extends CashRegisterException> ResponseEntity<Object> orderException(T e, Locale locale) {
-        return new ResponseEntity<>(messageSource.getMessage(
-                e.getMessage(), null, locale), HttpStatus.BAD_REQUEST);
+        String message = messageSource.getMessage(e.getMessage(), null, locale) +
+                System.lineSeparator() + messageSource.getMessage(warning, null, locale);
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }

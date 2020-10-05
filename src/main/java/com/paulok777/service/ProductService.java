@@ -3,15 +3,15 @@ package com.paulok777.service;
 import com.paulok777.dto.ProductDTO;
 import com.paulok777.entity.Product;
 import com.paulok777.exception.cashRegisterExc.productExc.DuplicateCodeOrNameException;
-import com.paulok777.exception.cashRegisterExc.productExc.NotEnoughProductsException;
+import com.paulok777.exception.cashRegisterExc.productExc.NoSuchProductsException;
 import com.paulok777.repository.ProductRepository;
 import com.paulok777.util.ExceptionKeys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,7 +21,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserService userService;
 
-    public List<Product> getProducts(Pageable pageable) {
+    public Page<Product> getProducts(Pageable pageable) {
         return productRepository.findByOrderByName(pageable);
     }
 
@@ -52,9 +52,8 @@ public class ProductService {
                             log.warn("(username: {}) {}.",
                                     userService.getCurrentUser().getUsername(),
                                     ExceptionKeys.NO_SUCH_PRODUCTS);
-                            throw new NotEnoughProductsException(ExceptionKeys.NO_SUCH_PRODUCTS);
-                        })
-        );
+                            throw new NoSuchProductsException(ExceptionKeys.NO_SUCH_PRODUCTS);
+                        }));
     }
 
     public void saveProduct(Product product) {

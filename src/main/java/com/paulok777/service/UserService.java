@@ -27,8 +27,7 @@ public class UserService implements UserDetailsService {
         try {
             userRepository.save(user);
         } catch (Exception e) {
-            log.warn("(username: {}) {}.",
-                    SecurityContextHolder.getContext().getAuthentication().getName(), ExceptionKeys.DUPLICATE_USERNAME);
+            log.warn("(username: {}) {}.", getCurrentUser().getUsername(), ExceptionKeys.DUPLICATE_USERNAME);
             throw new DuplicateUsernameException(ExceptionKeys.DUPLICATE_USERNAME);
         }
     }

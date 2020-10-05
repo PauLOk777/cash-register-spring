@@ -60,7 +60,7 @@
                 </div>
             </form>
         </div>
-        <table class="table">
+        <table class="table mb-5">
             <thead class="thead-light">
             <tr>
                 <th scope="col" th:text="#{code}"></th>
@@ -72,7 +72,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="product: ${products}">
+            <tr th:each="product: ${productPage}">
                 <th scope="row" th:text="${product.code}"></th>
                 <td th:text="${product.name}"></td>
                 <td th:text="${product.price}" class="priceToParse"></td>
@@ -89,6 +89,27 @@
             </tr>
             </tbody>
         </table>
+        <nav>
+            <ul class="pagination d-flex justify-content-center">
+                <li class="page-item" th:classappend="${currentPage <= 1} ? disabled">
+                    <a class="page-link"
+                       th:href="@{/commodity_expert/products(size=${productPage.size}, page=${currentPage - 1})}">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item" th:classappend="${pageNumber == productPage.number + 1} ? active"
+                    th:if="${productPage.totalPages > 0}" th:each="pageNumber : ${pageNumbers}">
+                    <a class="page-link" th:text="${pageNumber}"
+                       th:href="@{/commodity_expert/products(size=${productPage.size}, page=${pageNumber})}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage >= productPage.size} ? disabled">
+                    <a class="page-link"
+                       th:href="@{/commodity_expert/products(size=${productPage.size}, page=${currentPage + 1})}">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
     <div th:replace="partials/footer :: footer"></div>
 </body>
