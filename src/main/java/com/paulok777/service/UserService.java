@@ -2,7 +2,9 @@ package com.paulok777.service;
 
 import com.paulok777.dto.UserDTO;
 import com.paulok777.entity.User;
+import com.paulok777.exception.registrationExc.DuplicateUsernameException;
 import com.paulok777.repository.UserRepository;
+import com.paulok777.util.ExceptionKeys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +24,13 @@ public class UserService implements UserDetailsService {
     public void saveNewUser(UserDTO userDTO) {
         User user = new User(userDTO);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            log.warn("(username: {}) {}.",
+                    SecurityContextHolder.getContext().getAuthentication().getName(), ExceptionKeys.DUPLICATE_USERNAME);
+            throw new DuplicateUsernameException(ExceptionKeys.DUPLICATE_USERNAME);
+        }
     }
 
     public User getCurrentUser() {

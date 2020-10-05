@@ -21,3 +21,7 @@ footer {
     display: flex;
     justify-content: space-around;
 }
+
+.content-red {
+    color: red;
+}

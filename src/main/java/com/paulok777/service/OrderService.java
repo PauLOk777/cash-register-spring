@@ -2,7 +2,12 @@ package com.paulok777.service;
 
 import com.paulok777.dto.ReportDTO;
 import com.paulok777.entity.*;
+import com.paulok777.exception.orderExc.IllegalOrderStateException;
+import com.paulok777.exception.InvalidIdException;
+import com.paulok777.exception.orderExc.NoSuchProductException;
+import com.paulok777.exception.productExc.NotEnoughProductsException;
 import com.paulok777.repository.OrderRepository;
+import com.paulok777.util.ExceptionKeys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,22 +31,24 @@ public class OrderService {
     }
 
     public Order saveNewOrder() {
-        Order order = Order.builder()
-                .totalPrice(0L)
-                .createDate(LocalDateTime.now())
-                .status(OrderStatus.NEW)
-                .user(userService.getCurrentUser())
-                .orderProducts(new HashSet<>())
-                .build();
-        return orderRepository.save(order);
+        return orderRepository.save(
+                Order.builder()
+                        .totalPrice(0L)
+                        .createDate(LocalDateTime.now())
+                        .status(OrderStatus.NEW)
+                        .user(userService.getCurrentUser())
+                        .orderProducts(new HashSet<>())
+                        .build()
+        );
     }
 
     public Map<Long, Product> getProductsByOrderId(String id) {
         Order order = getOrderById(id);
         if (!order.getStatus().equals(OrderStatus.NEW)) {
-            log.warn("(username: {}) Order was closed or canceled.",
-                    SecurityContextHolder.getContext().getAuthentication().getName());
-            throw new IllegalArgumentException("Order was closed or canceled");
+            log.warn("(username: {}) {}.",
+                    SecurityContextHolder.getContext().getAuthentication().getName(),
+                    ExceptionKeys.ILLEGAL_ORDER_STATE);
+            throw new IllegalOrderStateException(ExceptionKeys.ILLEGAL_ORDER_STATE);
         }
 
          return order.getOrderProducts()
@@ -58,20 +65,27 @@ public class OrderService {
         Order order = getOrderById(orderId);
         Product product = productService.findByIdentifier(productIdentifier);
 
+        if (product.getAmount() < amount) {
+            log.warn("(username: {}) {}.",
+                    SecurityContextHolder.getContext().getAuthentication().getName(),
+                    ExceptionKeys.NOT_ENOUGH_PRODUCTS);
+            throw new NotEnoughProductsException(ExceptionKeys.NOT_ENOUGH_PRODUCTS);
+        }
+
         Set<OrderProducts> orderProductsSet = getOrderProductSet(order, product);
         OrderProducts orderProducts;
 
         if (orderProductsSet.size() > 0) {
-            Optional<OrderProducts> orderProductsOptional = orderProductsSet.stream().findFirst();
-            orderProducts = orderProductsOptional.orElseThrow();
+            orderProducts = parseOptionalAndThrowInvalidId(orderProductsSet.stream().findFirst());
             order.getOrderProducts().remove(orderProducts);
             product.getOrderProducts().remove(orderProducts);
             orderProducts.setAmount(amount + orderProducts.getAmount());
         } else {
-            orderProducts = new OrderProducts();
-            orderProducts.setOrder(order);
-            orderProducts.setProduct(product);
-            orderProducts.setAmount(amount);
+            orderProducts = OrderProducts.builder()
+                            .order(order)
+                            .product(product)
+                            .amount(amount)
+                            .build();
         }
 
         order.setTotalPrice(order.getTotalPrice() + product.getPrice() * amount);
@@ -89,22 +103,23 @@ public class OrderService {
         Order order = getOrderById(orderId);
         Product product = getProductById(productId);
 
-        Set<OrderProducts> orderProductsSet = getOrderProductSet(order, product);
+        OrderProducts orderProducts = parseOptionalAndThrowInvalidId(
+                getOrderProductSet(order, product).stream().findFirst());
 
-        Optional<OrderProducts> orderProductsOptional = orderProductsSet.stream().findFirst();
-        OrderProducts orderProducts = orderProductsOptional.orElseThrow();
         if (orderProducts.getAmount() < 1) {
-            log.warn("(username: {}) Product was removed from order.",
-                    SecurityContextHolder.getContext().getAuthentication().getName());
-            throw new IllegalArgumentException("Product was removed from order");
+            log.warn("(username: {}) {}.",
+                    SecurityContextHolder.getContext().getAuthentication().getName(),
+                    ExceptionKeys.ILLEGAL_ORDER_STATE_PRODUCT_CANCELED);
+            throw new NoSuchProductException(ExceptionKeys.ILLEGAL_ORDER_STATE_PRODUCT_CANCELED);
         }
 
         long prevAmount = orderProducts.getAmount();
 
         if (prevAmount + product.getAmount() < amount) {
-            log.warn("(username: {}) No so many products at storage.",
-                    SecurityContextHolder.getContext().getAuthentication().getName());
-            throw new IllegalArgumentException("No so many products at storage.");
+            log.warn("(username: {}) {}.",
+                    SecurityContextHolder.getContext().getAuthentication().getName(),
+                    ExceptionKeys.NOT_ENOUGH_PRODUCTS);
+            throw new NotEnoughProductsException(ExceptionKeys.NOT_ENOUGH_PRODUCTS);
         }
 
         order.getOrderProducts().remove(orderProducts);
@@ -125,22 +140,28 @@ public class OrderService {
     }
 
     public void makeStatusClosed(String id) {
-        orderRepository.changeStatusToClosed(Long.valueOf(id), OrderStatus.CLOSED);
+        try {
+            orderRepository.changeStatusToClosed(Long.valueOf(id), OrderStatus.CLOSED);
+        } catch (NumberFormatException e) {
+            log.warn("(username: {}) {}}.",
+                    SecurityContextHolder.getContext().getAuthentication().getName(),
+                    ExceptionKeys.INVALID_ID_EXCEPTION);
+            throw new InvalidIdException(ExceptionKeys.INVALID_ID_EXCEPTION);
+        }
     }
 
     @Transactional
     public void cancelOrder(String id) {
-        Optional<Order> order = orderRepository.findById(Long.valueOf(id));
-        Order currOrder = order.orElseThrow();
+        Order order = getOrderById(id);
 
-        for (OrderProducts orderProduct: currOrder.getOrderProducts()) {
-            Product product = orderProduct.getProduct();
-            product.setAmount(product.getAmount() + orderProduct.getAmount());
+        order.getOrderProducts().forEach(orderProducts -> {
+            Product product = orderProducts.getProduct();
+            product.setAmount(product.getAmount() + orderProducts.getAmount());
             productService.saveProduct(product);
-        }
+        });
 
-        currOrder.setStatus(OrderStatus.CANCELED);
-        orderRepository.save(currOrder);
+        order.setStatus(OrderStatus.CANCELED);
+        orderRepository.save(order);
     }
 
     @Transactional
@@ -148,21 +169,16 @@ public class OrderService {
         Order order = getOrderById(orderId);
         Product product = getProductById(productId);
 
-        Set<OrderProducts> orderProductsSet = getOrderProductSet(order, product);
-
-        Optional<OrderProducts> orderProductsOptional = orderProductsSet.stream().findFirst();
-        OrderProducts orderProducts = orderProductsOptional.orElseThrow();
+        OrderProducts orderProducts = parseOptionalAndThrowInvalidId(
+                getOrderProductSet(order, product).stream().findFirst());
 
         order.getOrderProducts().remove(orderProducts);
         product.getOrderProducts().remove(orderProducts);
 
-        long productPrice = product.getPrice();
-        long amount = orderProducts.getAmount();
-
-        order.setTotalPrice(order.getTotalPrice() - productPrice * amount);
-        product.setAmount(product.getAmount() + amount);
-
+        order.setTotalPrice(order.getTotalPrice() - product.getPrice() * orderProducts.getAmount());
+        product.setAmount(product.getAmount() + orderProducts.getAmount());
         orderProducts.setAmount(0L);
+
         order.getOrderProducts().add(orderProducts);
         product.getOrderProducts().add(orderProducts);
 
@@ -171,13 +187,34 @@ public class OrderService {
     }
 
     public Order getOrderById(String id) {
-        Optional<Order> order = orderRepository.findById(Long.valueOf(id));
-        return order.orElseThrow();
+        try {
+            return parseOptionalAndThrowInvalidId(orderRepository.findById(Long.parseLong(id)));
+        } catch (NumberFormatException e) {
+            log.warn("(username: {}) {}}.",
+                    SecurityContextHolder.getContext().getAuthentication().getName(),
+                    ExceptionKeys.INVALID_ID_EXCEPTION);
+            throw new InvalidIdException("Invalid value for order id.");
+        }
     }
 
     public Product getProductById(String id) {
-        Optional<Product> product = productService.findById(Long.valueOf(id));
-        return product.orElseThrow();
+        try {
+            return parseOptionalAndThrowInvalidId(productService.findById(Long.parseLong(id)));
+        } catch (NumberFormatException e) {
+            log.warn("(username: {}) {}}.",
+                    SecurityContextHolder.getContext().getAuthentication().getName(),
+                    ExceptionKeys.INVALID_ID_EXCEPTION);
+            throw new InvalidIdException("Invalid value for order id.");
+        }
+    }
+
+    private <T> T parseOptionalAndThrowInvalidId(Optional<T> optional) {
+        return optional.orElseThrow(() -> {
+            log.warn("(username: {}) {}}.",
+                    SecurityContextHolder.getContext().getAuthentication().getName(),
+                    ExceptionKeys.INVALID_ID_EXCEPTION);
+            throw new InvalidIdException("Invalid value for order id.");
+        });
     }
 
     private Set<OrderProducts> getOrderProductSet(Order order, Product product) {
@@ -189,14 +226,17 @@ public class OrderService {
     }
 
     public ReportDTO makeXReport() {
-        List<Order> orders = orderRepository.findByStatus(OrderStatus.CLOSED);
-        return getReportInfo(orders);
+        return getReportInfo(getClosedOrders());
     }
 
     public ReportDTO makeZReport() {
-        List<Order> orders = orderRepository.findByStatus(OrderStatus.CLOSED);
+        List<Order> orders = getClosedOrders();
         archiveOrders(orders);
         return getReportInfo(orders);
+    }
+
+    private List<Order> getClosedOrders() {
+        return orderRepository.findByStatus(OrderStatus.CLOSED);
     }
 
     private ReportDTO getReportInfo(List<Order> orders) {

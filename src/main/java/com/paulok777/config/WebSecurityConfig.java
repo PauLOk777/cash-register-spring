@@ -2,7 +2,7 @@ package com.paulok777.config;
 
 import com.paulok777.entity.Role;
 import com.paulok777.service.UserService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -16,10 +16,19 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final PasswordEncoder passwordEncoder;
-    private final UserService userService;
+    private UserService userService;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -52,12 +61,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AuthenticationSuccessHandler myAuthenticationSuccessHandler(){
-        return new UrlAuthenticationSuccessHandler();
+    public PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder(8);
     }
 
     @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
+    public AuthenticationSuccessHandler myAuthenticationSuccessHandler(){
+        return new UrlAuthenticationSuccessHandler();
     }
 }

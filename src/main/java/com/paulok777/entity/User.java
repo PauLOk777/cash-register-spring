@@ -17,13 +17,13 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity(name="users")
 @Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"code"}),
-        @UniqueConstraint(columnNames = {"name"})
+        @UniqueConstraint(columnNames = {"username"})
 })
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, name = "username")
     private String username;
     private String password;
     private String firstName;
