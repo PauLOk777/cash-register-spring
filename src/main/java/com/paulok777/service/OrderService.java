@@ -81,11 +81,10 @@ public class OrderService {
             product.getOrderProducts().remove(orderProducts);
             orderProducts.setAmount(amount + orderProducts.getAmount());
         } else {
-            orderProducts = OrderProducts.builder()
-                            .order(order)
-                            .product(product)
-                            .amount(amount)
-                            .build();
+            orderProducts = new OrderProducts();
+            orderProducts.setOrder(order);
+            orderProducts.setProduct(product);
+            orderProducts.setAmount(amount);
         }
 
         order.setTotalPrice(order.getTotalPrice() + product.getPrice() * amount);
