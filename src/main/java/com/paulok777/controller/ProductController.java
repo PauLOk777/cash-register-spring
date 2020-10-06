@@ -4,12 +4,12 @@ import com.paulok777.dto.ProductDTO;
 import com.paulok777.entity.Measure;
 import com.paulok777.entity.Product;
 import com.paulok777.service.ProductService;
+import com.paulok777.service.UserService;
 import com.paulok777.util.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +25,7 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+    private final UserService userService;
 
     @GetMapping
     public String getProducts(Model model,@RequestParam(required = false) Optional<Integer> page,
@@ -49,8 +50,8 @@ public class ProductController {
 
     @PostMapping
     public String createProduct(ProductDTO productDTO) {
-        log.info("(username: {}) create product: {}", productDTO,
-                SecurityContextHolder.getContext().getAuthentication().getName());
+        log.info("(username: {}) create product: {}",
+                userService.getCurrentUser().getUsername(), productDTO);
         Validator.validateProduct(productDTO);
         productService.saveNewProduct(productDTO);
         return "redirect:/commodity_expert/products";
@@ -59,7 +60,7 @@ public class ProductController {
     @PostMapping("/{id}")
     public String changeAmountOfProduct(@RequestParam Long amount, @PathVariable String id) {
         log.info("(username: {}) change amount of product (id:{}) to: {}", id, amount,
-                SecurityContextHolder.getContext().getAuthentication().getName());
+                userService.getCurrentUser().getUsername());
         Validator.validateAmountForCommodityExpert(amount);
         productService.setAmountById(amount, Long.valueOf(id));
         return "redirect:/commodity_expert/products";
