@@ -3,6 +3,7 @@ package com.paulok777.controller;
 import com.paulok777.dto.UserDTO;
 import com.paulok777.entity.Role;
 import com.paulok777.service.UserService;
+import com.paulok777.util.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,7 @@ public class UserController {
     @PostMapping("/registration")
     public String addUser(@Validated UserDTO userDTO) {
         log.info("{}", userDTO);
+        Validator.validateUser(userDTO);
         userService.saveNewUser(userDTO);
         return "redirect:/login";
     }

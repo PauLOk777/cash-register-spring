@@ -4,6 +4,7 @@ import com.paulok777.dto.ProductDTO;
 import com.paulok777.entity.Measure;
 import com.paulok777.entity.Product;
 import com.paulok777.service.ProductService;
+import com.paulok777.util.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -31,7 +32,6 @@ public class ProductController {
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(2);
         Page<Product> productPage = productService.getProducts(PageRequest.of(currentPage - 1, pageSize));
-        System.out.println(productPage.getTotalElements());
         model.addAttribute("productPage", productPage);
 
         int totalPages = productPage.getTotalPages();
@@ -51,6 +51,7 @@ public class ProductController {
     public String createProduct(ProductDTO productDTO) {
         log.info("(username: {}) create product: {}", productDTO,
                 SecurityContextHolder.getContext().getAuthentication().getName());
+        Validator.validateProduct(productDTO);
         productService.saveNewProduct(productDTO);
         return "redirect:/commodity_expert/products";
     }
@@ -59,6 +60,7 @@ public class ProductController {
     public String changeAmountOfProduct(@RequestParam Long amount, @PathVariable String id) {
         log.info("(username: {}) change amount of product (id:{}) to: {}", id, amount,
                 SecurityContextHolder.getContext().getAuthentication().getName());
+        Validator.validateAmountForCommodityExpert(amount);
         productService.setAmountById(amount, Long.valueOf(id));
         return "redirect:/commodity_expert/products";
     }

@@ -3,6 +3,7 @@ package com.paulok777.controller;
 import com.paulok777.entity.Order;
 import com.paulok777.entity.Product;
 import com.paulok777.service.OrderService;
+import com.paulok777.util.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -95,6 +96,7 @@ public class OrderController {
     private void addProduct(String id, String productIdentifier, Long amount) {
         log.info("(username: {}) add product (code or name:{}) to order (id:{}) in amount: {}",
                 productIdentifier, id, amount, SecurityContextHolder.getContext().getAuthentication().getName());
+        Validator.validateAmountForCashier(amount);
         orderService.addProductToOrderByCodeOrName(id, productIdentifier, amount);
     }
 
@@ -115,6 +117,7 @@ public class OrderController {
     public void changeAmountOfProduct(String orderId, String productId, Long amount) {
         log.info("(username: {}) change product amount (id:{}) to order (id:{}) to: {}",
                 productId, orderId, amount, SecurityContextHolder.getContext().getAuthentication().getName());
+        Validator.validateAmountForCashier(amount);
         orderService.changeAmountOfProduct(orderId, productId, amount);
     }
 
