@@ -2,8 +2,8 @@ package com.paulok777.service;
 
 import com.paulok777.dto.ProductDTO;
 import com.paulok777.entity.Product;
+import com.paulok777.exception.cashRegisterExc.orderExc.NoSuchProductException;
 import com.paulok777.exception.cashRegisterExc.productExc.DuplicateCodeOrNameException;
-import com.paulok777.exception.cashRegisterExc.productExc.NoSuchProductsException;
 import com.paulok777.repository.ProductRepository;
 import com.paulok777.util.ExceptionKeys;
 import lombok.RequiredArgsConstructor;
@@ -50,9 +50,8 @@ public class ProductService {
                 () -> findByName(productIdentifier).orElseThrow(
                         () -> {
                             log.warn("(username: {}) {}.",
-                                    userService.getCurrentUser().getUsername(),
-                                    ExceptionKeys.NO_SUCH_PRODUCTS);
-                            throw new NoSuchProductsException(ExceptionKeys.NO_SUCH_PRODUCTS);
+                                    userService.getCurrentUser().getUsername(), ExceptionKeys.NO_SUCH_PRODUCTS);
+                            throw new NoSuchProductException(ExceptionKeys.NO_SUCH_PRODUCTS);
                         }));
     }
 
@@ -63,8 +62,7 @@ public class ProductService {
                     userService.getCurrentUser().getUsername(), product.getId());
         } catch (Exception e) {
             log.warn("(username: {}) {}.",
-                    userService.getCurrentUser().getUsername(),
-                    ExceptionKeys.DUPLICATE_CODE_OR_NAME);
+                    userService.getCurrentUser().getUsername(), ExceptionKeys.DUPLICATE_CODE_OR_NAME);
             throw new DuplicateCodeOrNameException(ExceptionKeys.DUPLICATE_CODE_OR_NAME);
         }
     }

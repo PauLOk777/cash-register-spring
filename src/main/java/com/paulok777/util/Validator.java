@@ -55,7 +55,7 @@ public class Validator {
             throw new FieldValidationException(ExceptionKeys.INVALID_PRODUCT_CODE);
         }
 
-        if (!productDTO.getName().matches(ValidationRegex.PRODUCT_NAME_REGEX)) {
+        if (!productDTO.getName().trim().matches(ValidationRegex.PRODUCT_NAME_REGEX)) {
             log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_PRODUCT_NAME);
             throw new FieldValidationException(ExceptionKeys.INVALID_PRODUCT_NAME);
         }

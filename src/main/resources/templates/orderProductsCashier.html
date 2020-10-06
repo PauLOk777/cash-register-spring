@@ -27,11 +27,11 @@
             <form th:action="@{/cashier/orders/} + ${orderId}" method="post">
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label th:text="#{codeOrNameOfProduct} + ':'" for="productIdentifier"></label>
+                        <label th:text="#{codeOrNameOfProduct}" for="productIdentifier"></label>
                         <input type="text" name="productIdentifier" id="productIdentifier" class="form-control"/>
                     </div>
                     <div class="form-group col-md-6">
-                        <label th:text="#{amount} + ':'" for="amount"></label>
+                        <label th:text="#{amount}" for="amount"></label>
                         <input type="number" name="amount" id="amount" class="form-control" value="1"/>
                     </div>
                 </div>

@@ -27,27 +27,27 @@
             <form action="/commodity_expert/products" method="post">
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label th:text="#{code} + ':'" for="code"></label>
+                        <label th:text="#{code}" for="code"></label>
                         <input type="text" name="code" id="code" class="form-control"/>
                     </div>
                     <div class="form-group col-md-6">
-                        <label th:text="#{name} + ':'" for="name"></label>
+                        <label th:text="#{name}" for="name"></label>
                         <input type="text" name="name" id="name" class="form-control"/>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
-                        <label th:text="#{price} + #{inCoins} + ':'" for="price"></label>
+                        <label th:text="#{price} + #{inCoins}" for="price"></label>
                         <input type="number" name="price" id="price" class="form-control"/>
                     </div>
                     <div class="form-group col-md-6">
-                        <label th:text="#{amount}  + #{amountWeight} + ':'" for="amount"></label>
+                        <label th:text="#{amount}  + #{amountWeight}" for="amount"></label>
                         <input type="number" name="amount" id="amount" class="form-control"/>
                     </div>
                 </div>
                 <div class="form-row justify-content-center mb-4">
                     <div class="col-xl-3 col-xs-offset-3">
-                        <label for="measure" th:text="#{measure} + ':'"></label>
+                        <label for="measure" th:text="#{measure}"></label>
                         <select name="measure" id="measure" class="form-control">
                             <option th:each="measure: ${measures}" th:value="${measure.name()}">
                                 [[#{${measure.name()}}]]
@@ -102,7 +102,7 @@
                     <a class="page-link" th:text="${pageNumber}"
                        th:href="@{/commodity_expert/products(size=${productPage.size}, page=${pageNumber})}"></a>
                 </li>
-                <li class="page-item" th:classappend="${currentPage >= productPage.size} ? disabled">
+                <li class="page-item" th:classappend="${currentPage > productPage.size} ? disabled">
                     <a class="page-link"
                        th:href="@{/commodity_expert/products(size=${productPage.size}, page=${currentPage + 1})}">
                         <span aria-hidden="true">&raquo;</span>
