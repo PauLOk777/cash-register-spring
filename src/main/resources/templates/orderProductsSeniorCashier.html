@@ -20,7 +20,7 @@
             crossorigin="anonymous"></script>
     <script type="text/javascript" th:src="@{/js/convertCoinsToBill.js}"></script>
 </head>
-<body onload="convertCoinsToBill()">
+<body onload="convertCoinsToBill()" class="d-flex flex-column min-vh-100">
     <div th:replace="partials/seniorCashierHeader :: nav"></div>
     <div class="content-form">
         <div class="mb-5">

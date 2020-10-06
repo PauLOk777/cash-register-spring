@@ -5,6 +5,13 @@
     margin-top: 100px;
 }
 
+.authorization-form {
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+}
+
 .btn-wrapper {
     text-align: center;
 }

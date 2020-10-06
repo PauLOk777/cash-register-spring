@@ -67,7 +67,7 @@ public class Validator {
 
         validateAmountForCommodityExpert(productDTO.getAmount());
 
-        if (productDTO.getMeasure().matches(ValidationRegex.MEASURE_REGEXP)) {
+        if (!productDTO.getMeasure().matches(ValidationRegex.MEASURE_REGEXP)) {
             log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_PRODUCT_MEASURE);
             throw new FieldValidationException(ExceptionKeys.INVALID_PRODUCT_MEASURE);
         }
