@@ -2,8 +2,8 @@ package com.paulok777.service;
 
 import com.paulok777.dto.ProductDTO;
 import com.paulok777.entity.Product;
-import com.paulok777.exception.cashRegisterExc.orderExc.NoSuchProductException;
-import com.paulok777.exception.cashRegisterExc.productExc.DuplicateCodeOrNameException;
+import com.paulok777.exception.cash_register_exc.order_exc.NoSuchProductException;
+import com.paulok777.exception.cash_register_exc.product_exc.DuplicateCodeOrNameException;
 import com.paulok777.repository.ProductRepository;
 import com.paulok777.util.ExceptionKeys;
 import lombok.RequiredArgsConstructor;

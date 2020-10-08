@@ -2,7 +2,7 @@ package com.paulok777.util;
 
 import com.paulok777.dto.ProductDTO;
 import com.paulok777.dto.UserDTO;
-import com.paulok777.exception.cashRegisterExc.FieldValidationException;
+import com.paulok777.exception.cash_register_exc.FieldValidationException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.context.SecurityContextHolder;
 

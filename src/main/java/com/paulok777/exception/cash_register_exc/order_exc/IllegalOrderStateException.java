@@ -1,6 +1,6 @@
-package com.paulok777.exception.cashRegisterExc.orderExc;
+package com.paulok777.exception.cash_register_exc.order_exc;
 
-import com.paulok777.exception.cashRegisterExc.OrderException;
+import com.paulok777.exception.cash_register_exc.OrderException;
 
 public class IllegalOrderStateException extends OrderException {
     public IllegalOrderStateException(String message) {

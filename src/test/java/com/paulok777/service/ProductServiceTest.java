@@ -3,7 +3,7 @@ package com.paulok777.service;
 import com.paulok777.entity.Measure;
 import com.paulok777.entity.Product;
 import com.paulok777.entity.User;
-import com.paulok777.exception.cashRegisterExc.orderExc.NoSuchProductException;
+import com.paulok777.exception.cash_register_exc.order_exc.NoSuchProductException;
 import com.paulok777.repository.ProductRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -26,11 +26,4 @@ public class Order {
     private User user;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private Set<OrderProducts> orderProducts;
-
-    public Order(User user) {
-        totalPrice = 0L;
-        status = OrderStatus.NEW;
-        this.user = user;
-        orderProducts = new HashSet<>();
-    }
 }
