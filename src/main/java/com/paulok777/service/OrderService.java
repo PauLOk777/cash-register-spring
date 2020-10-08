@@ -197,7 +197,7 @@ public class OrderService {
         } catch (NumberFormatException e) {
             log.warn("(username: {}) {}}.",
                     userService.getCurrentUser().getUsername(), ExceptionKeys.INVALID_ID_EXCEPTION);
-            throw new InvalidIdException("Invalid value for order id.");
+            throw new InvalidIdException(ExceptionKeys.INVALID_ID_EXCEPTION);
         }
     }
 
@@ -207,7 +207,7 @@ public class OrderService {
         } catch (NumberFormatException e) {
             log.warn("(username: {}) {}}.",
                     userService.getCurrentUser().getUsername(), ExceptionKeys.INVALID_ID_EXCEPTION);
-            throw new InvalidIdException("Invalid value for order id.");
+            throw new InvalidIdException(ExceptionKeys.INVALID_ID_EXCEPTION);
         }
     }
 
@@ -216,7 +216,7 @@ public class OrderService {
             log.warn("(username: {}) {}}.",
                     userService.getCurrentUser().getUsername(),
                     ExceptionKeys.INVALID_ID_EXCEPTION);
-            throw new InvalidIdException("Invalid value for order id.");
+            throw new InvalidIdException(ExceptionKeys.INVALID_ID_EXCEPTION);
         });
     }
 
