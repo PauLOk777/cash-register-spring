@@ -47,7 +47,7 @@ public class OrderService {
     public Map<Long, Product> getProductsByOrderId(String id) {
         Order order = getOrderById(id);
         if (!order.getStatus().equals(OrderStatus.NEW)) {
-            log.warn("(username: {}) {}.",
+            log.error("(username: {}) {}.",
                     userService.getCurrentUser().getUsername(), ExceptionKeys.ILLEGAL_ORDER_STATE);
             throw new IllegalOrderStateException(ExceptionKeys.ILLEGAL_ORDER_STATE);
         }
@@ -132,7 +132,7 @@ public class OrderService {
 
     private void checkIllegalOrderStateProductCanceled(OrderProducts orderProducts) {
         if (orderProducts.getAmount() < 1) {
-            log.warn("(username: {}) {}.",
+            log.error("(username: {}) {}.",
                     userService.getCurrentUser().getUsername(), ExceptionKeys.ILLEGAL_ORDER_STATE_PRODUCT_CANCELED);
             throw new NoSuchProductException(ExceptionKeys.ILLEGAL_ORDER_STATE_PRODUCT_CANCELED);
         }
@@ -140,7 +140,7 @@ public class OrderService {
 
     private void checkProductAmount(Long amount, Long productAmount) {
         if (productAmount < amount) {
-            log.warn("(username: {}) {}.",
+            log.error("(username: {}) {}.",
                     userService.getCurrentUser().getUsername(), ExceptionKeys.NOT_ENOUGH_PRODUCTS);
             throw new NotEnoughProductsException(ExceptionKeys.NOT_ENOUGH_PRODUCTS);
         }
@@ -150,7 +150,7 @@ public class OrderService {
         try {
             orderRepository.changeStatusToClosed(Long.valueOf(id), OrderStatus.CLOSED);
         } catch (NumberFormatException e) {
-            log.warn("(username: {}) {}}.",
+            log.error("(username: {}) {}.",
                     userService.getCurrentUser().getUsername(), ExceptionKeys.INVALID_ID_EXCEPTION);
             throw new InvalidIdException(ExceptionKeys.INVALID_ID_EXCEPTION);
         }
@@ -195,7 +195,7 @@ public class OrderService {
         try {
             return parseOptionalAndThrowInvalidId(orderRepository.findById(Long.parseLong(id)));
         } catch (NumberFormatException e) {
-            log.warn("(username: {}) {}}.",
+            log.error("(username: {}) {}.",
                     userService.getCurrentUser().getUsername(), ExceptionKeys.INVALID_ID_EXCEPTION);
             throw new InvalidIdException(ExceptionKeys.INVALID_ID_EXCEPTION);
         }
@@ -205,7 +205,7 @@ public class OrderService {
         try {
             return parseOptionalAndThrowInvalidId(productService.findById(Long.parseLong(id)));
         } catch (NumberFormatException e) {
-            log.warn("(username: {}) {}}.",
+            log.error("(username: {}) {}.",
                     userService.getCurrentUser().getUsername(), ExceptionKeys.INVALID_ID_EXCEPTION);
             throw new InvalidIdException(ExceptionKeys.INVALID_ID_EXCEPTION);
         }
@@ -213,7 +213,7 @@ public class OrderService {
 
     private <T> T parseOptionalAndThrowInvalidId(Optional<T> optional) {
         return optional.orElseThrow(() -> {
-            log.warn("(username: {}) {}}.",
+            log.error("(username: {}) {}.",
                     userService.getCurrentUser().getUsername(),
                     ExceptionKeys.INVALID_ID_EXCEPTION);
             throw new InvalidIdException(ExceptionKeys.INVALID_ID_EXCEPTION);

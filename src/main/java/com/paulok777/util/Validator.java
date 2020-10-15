@@ -12,37 +12,37 @@ public class Validator {
         final String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         if (!userDTO.getFirstName().matches(ValidationRegex.FIRST_NAME_REGEX)) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_FIRST_NAME);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_FIRST_NAME);
             throw new FieldValidationException(ExceptionKeys.INVALID_USER_FIRST_NAME);
         }
 
         if (!userDTO.getLastName().matches(ValidationRegex.LAST_NAME_REGEX)) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_LAST_NAME);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_LAST_NAME);
             throw new FieldValidationException(ExceptionKeys.INVALID_USER_LAST_NAME);
         }
 
         if (!userDTO.getEmail().matches(ValidationRegex.EMAIL_REGEX)) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_EMAIL);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_EMAIL);
             throw new FieldValidationException(ExceptionKeys.INVALID_USER_EMAIL);
         }
 
         if (!userDTO.getUsername().matches(ValidationRegex.USERNAME_REGEX)) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_USERNAME);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_USERNAME);
             throw new FieldValidationException(ExceptionKeys.INVALID_USER_USERNAME);
         }
 
         if (!userDTO.getPassword().matches(ValidationRegex.PASSWORD_REGEX)) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_PASSWORD);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_PASSWORD);
             throw new FieldValidationException(ExceptionKeys.INVALID_USER_PASSWORD);
         }
 
         if (!userDTO.getPhoneNumber().matches(ValidationRegex.PHONE_NUMBER_REGEX)) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_PHONE_NUMBER);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_PHONE_NUMBER);
             throw new FieldValidationException(ExceptionKeys.INVALID_USER_PHONE_NUMBER);
         }
 
         if (!userDTO.getRole().matches(ValidationRegex.POSITION_REGEX)) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_POSITION);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_USER_POSITION);
             throw new FieldValidationException(ExceptionKeys.INVALID_USER_POSITION);
         }
     }
@@ -51,24 +51,24 @@ public class Validator {
         final String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         if (!productDTO.getCode().matches(ValidationRegex.CODE_REGEX)) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_PRODUCT_CODE);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_PRODUCT_CODE);
             throw new FieldValidationException(ExceptionKeys.INVALID_PRODUCT_CODE);
         }
 
         if (!productDTO.getName().trim().matches(ValidationRegex.PRODUCT_NAME_REGEX)) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_PRODUCT_NAME);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_PRODUCT_NAME);
             throw new FieldValidationException(ExceptionKeys.INVALID_PRODUCT_NAME);
         }
 
         if (productDTO.getPrice() < 1) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_PRODUCT_PRICE);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_PRODUCT_PRICE);
             throw new FieldValidationException(ExceptionKeys.INVALID_PRODUCT_PRICE);
         }
 
         validateAmountForCommodityExpert(productDTO.getAmount());
 
         if (!productDTO.getMeasure().matches(ValidationRegex.MEASURE_REGEXP)) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_PRODUCT_MEASURE);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_PRODUCT_MEASURE);
             throw new FieldValidationException(ExceptionKeys.INVALID_PRODUCT_MEASURE);
         }
     }
@@ -77,7 +77,7 @@ public class Validator {
         final String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         if (amount < 0) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_AMOUNT_COMMODITY_EXPERT);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_AMOUNT_COMMODITY_EXPERT);
             throw new FieldValidationException(ExceptionKeys.INVALID_AMOUNT_COMMODITY_EXPERT);
         }
     }
@@ -86,7 +86,7 @@ public class Validator {
         final String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         if (amount < 1) {
-            log.warn("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_AMOUNT_CASHIER);
+            log.error("(username: {}) {}.", currentUsername, ExceptionKeys.INVALID_AMOUNT_CASHIER);
             throw new FieldValidationException(ExceptionKeys.INVALID_AMOUNT_CASHIER);
         }
     }

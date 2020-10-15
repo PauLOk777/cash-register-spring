@@ -49,7 +49,7 @@ public class ProductService {
         return product.orElseGet(
                 () -> findByName(productIdentifier).orElseThrow(
                         () -> {
-                            log.warn("(username: {}) {}.",
+                            log.error("(username: {}) {}.",
                                     userService.getCurrentUser().getUsername(), ExceptionKeys.NO_SUCH_PRODUCTS);
                             throw new NoSuchProductException(ExceptionKeys.NO_SUCH_PRODUCTS);
                         }));
@@ -61,7 +61,7 @@ public class ProductService {
             log.debug("(username: {}) Product saved successfully. Product id: {}",
                     userService.getCurrentUser().getUsername(), product.getId());
         } catch (Exception e) {
-            log.warn("(username: {}) {}.",
+            log.error("(username: {}) {}.",
                     userService.getCurrentUser().getUsername(), ExceptionKeys.DUPLICATE_CODE_OR_NAME);
             throw new DuplicateCodeOrNameException(ExceptionKeys.DUPLICATE_CODE_OR_NAME);
         }

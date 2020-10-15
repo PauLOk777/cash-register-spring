@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -25,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-    public String addUser(@Validated UserDTO userDTO) {
+    public String addUser(UserDTO userDTO) {
         log.info("{}", userDTO);
         Validator.validateUser(userDTO);
         userService.saveNewUser(userDTO);
