@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class UrlAuthentificationSuccessHandler implements AuthenticationSuccessHandler {
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
