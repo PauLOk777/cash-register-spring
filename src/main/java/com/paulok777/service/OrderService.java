@@ -44,7 +44,7 @@ public class OrderService {
         );
     }
 
-    public Map<Long, Product> getProductsByOrderId(String id) {
+    public Map<Product, Long> getProductsByOrderId(String id) {
         Order order = getOrderById(id);
         if (!order.getStatus().equals(OrderStatus.NEW)) {
             log.error("(username: {}) {}.",
@@ -57,7 +57,7 @@ public class OrderService {
                 .filter(orderProducts -> orderProducts.getAmount() > 0)
                 .sorted(Comparator.comparing(op -> op.getProduct().getName()))
                 .collect(Collectors.toMap(
-                        OrderProducts::getAmount, OrderProducts::getProduct,
+                        OrderProducts::getProduct, OrderProducts::getAmount,
                         (x, y) -> y, LinkedHashMap::new));
     }
 

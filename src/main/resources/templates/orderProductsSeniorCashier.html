@@ -55,13 +55,13 @@
                 </thead>
                 <tbody>
                 <tr th:each="product: ${products}">
-                    <th scope="row" th:text="${product.value.code}"></th>
-                    <td th:text="${product.value.name}"></td>
-                    <td th:text="${product.value.price}" class="priceToParse"></td>
-                    <td th:text="#{${product.value.measure.name()}}"></td>
-                    <td th:text="${product.key}"></td>
+                    <th scope="row" th:text="${product.key.code}"></th>
+                    <td th:text="${product.key.name}"></td>
+                    <td th:text="${product.key.price}" class="priceToParse"></td>
+                    <td th:text="#{${product.key.measure.name()}}"></td>
+                    <td th:text="${product.value}"></td>
                     <td>
-                        <form th:action="@{/senior_cashier/orders/} + ${orderId + '/' + product.value.id}" method="post"
+                        <form th:action="@{/senior_cashier/orders/} + ${orderId + '/' + product.key.id}" method="post"
                               class="form-inline">
                             <div class="form-group mx-sm-1 input-group-sm">
                                 <input type="number" name="amount" class="form-control"/>
@@ -70,7 +70,7 @@
                         </form>
                     </td>
                     <td>
-                        <form th:action="@{/senior_cashier/orders/cancel/} + ${orderId + '/' + product.value.id}" method="post">
+                        <form th:action="@{/senior_cashier/orders/cancel/} + ${orderId + '/' + product.key.id}" method="post">
                             <button type="submit" class="btn btn-outline-danger btn-sm">[[#{cancel}]]</button>
                         </form>
                     </td>

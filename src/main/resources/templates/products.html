@@ -102,7 +102,7 @@
                     <a class="page-link" th:text="${pageNumber}"
                        th:href="@{/commodity_expert/products(size=${productPage.size}, page=${pageNumber})}"></a>
                 </li>
-                <li class="page-item" th:classappend="${currentPage >= pageNumbers.size()} ? disabled">
+                <li class="page-item" th:classappend="${currentPage >= productPage.totalPages} ? disabled">
                     <a class="page-link"
                        th:href="@{/commodity_expert/products(size=${productPage.size}, page=${currentPage + 1})}">
                         <span aria-hidden="true">&raquo;</span>

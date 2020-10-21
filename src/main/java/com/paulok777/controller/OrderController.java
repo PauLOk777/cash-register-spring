@@ -74,7 +74,7 @@ public class OrderController {
     public void getOrderById(String id, Model model) {
         log.info("(username: {}) get order by id: {}", id,
                 SecurityContextHolder.getContext().getAuthentication().getName());
-        Map<Long, Product> products = orderService.getProductsByOrderId(id);
+        Map<Product, Long> products = orderService.getProductsByOrderId(id);
         model.addAttribute("orderId", id);
         model.addAttribute("products", products);
     }
