@@ -15,19 +15,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Log4j2
 @RequiredArgsConstructor
 public class UserController {
+
+    private static final String REGISTRATION = "/registration";
+    private static final String LOGIN = "/login";
+
+    private static final String REGISTRATION_PAGE = "registration";
+    private static final String POSITIONS_ATTRIBUTE = "positions";
+    private static final String REDIRECT_PREFIX = "redirect:";
+
     private final UserService userService;
 
-    @GetMapping("/registration")
+    @GetMapping(REGISTRATION)
     public String registration(Model model) {
-        model.addAttribute("positions", Role.values());
-        return "registration";
+        model.addAttribute(POSITIONS_ATTRIBUTE, Role.values());
+        return REGISTRATION_PAGE;
     }
 
-    @PostMapping("/registration")
+    @PostMapping(REGISTRATION)
     public String addUser(UserDTO userDTO) {
         log.info("{}", userDTO);
         Validator.validateUser(userDTO);
         userService.saveNewUser(userDTO);
-        return "redirect:/login";
+        return REDIRECT_PREFIX + LOGIN;
     }
 }

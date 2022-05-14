@@ -15,22 +15,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @RequestMapping("/senior_cashier/reports")
 public class ReportController {
+
+    private static final String X_REPORTS = "/x";
+    private static final String Z_REPORTS = "/z";
+
+    private static final String REPORTS_PAGE = "reports";
+    private static final String REPORT_ATTRIBUTE = "report";
+
     private final OrderService orderService;
     private final UserService userService;
 
-    @GetMapping("/x")
+    @GetMapping(X_REPORTS)
     public String makeXReport(Model model) {
         log.info("(username: {}) make X report", userService.getCurrentUser().getUsername());
         ReportDTO reportDTO = orderService.makeXReport();
-        model.addAttribute("report", reportDTO);
-        return "reports";
+        model.addAttribute(REPORT_ATTRIBUTE, reportDTO);
+        return REPORTS_PAGE;
     }
 
-    @GetMapping("/z")
+    @GetMapping(Z_REPORTS)
     public String makeZReport(Model model) {
         log.info("(username: {}) make X report", userService.getCurrentUser().getUsername());
         ReportDTO reportDTO = orderService.makeZReport();
-        model.addAttribute("report", reportDTO);
-        return "reports";
+        model.addAttribute(REPORT_ATTRIBUTE, reportDTO);
+        return REPORTS_PAGE;
     }
 }

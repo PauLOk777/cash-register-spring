@@ -24,28 +24,40 @@ import java.util.stream.IntStream;
 @RequestMapping("/commodity_expert/products")
 @RequiredArgsConstructor
 public class ProductController {
+
+    private static final String COMMODITY_EXPERT_PRODUCTS = "/commodity_expert/products";
+    private static final String PRODUCTS_PAGE = "products";
+    private static final String REDIRECT_PREFIX = "redirect:";
+    private static final String PRODUCTS_PAGE_DATA_ATTRIBUTE = "productPage";
+    private static final String PAGE_NUMBERS_ATTRIBUTE = "pageNumbers";
+    private static final String CURRENT_PAGE_ATTRIBUTE = "currentPage";
+    private static final String MEASURES_ATTRIBUTE = "measures";
+
+    private static final int DEFAULT_CURRENT_PAGE = 1;
+    private static final int DEFAULT_PAGE_SIZE = 2;
+
     private final ProductService productService;
     private final UserService userService;
 
     @GetMapping
     public String getProducts(Model model,@RequestParam(required = false) Optional<Integer> page,
                               @RequestParam(required = false) Optional<Integer> size) {
-        int currentPage = page.orElse(1);
-        int pageSize = size.orElse(2);
+        int currentPage = page.orElse(DEFAULT_CURRENT_PAGE);
+        int pageSize = size.orElse(DEFAULT_PAGE_SIZE);
         Page<Product> productPage = productService.getProducts(PageRequest.of(currentPage - 1, pageSize));
-        model.addAttribute("productPage", productPage);
+        model.addAttribute(PRODUCTS_PAGE_DATA_ATTRIBUTE, productPage);
 
         int totalPages = productPage.getTotalPages();
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
                     .boxed()
                     .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
+            model.addAttribute(PAGE_NUMBERS_ATTRIBUTE, pageNumbers);
         }
 
-        model.addAttribute("currentPage", currentPage);
-        model.addAttribute("measures", Measure.values());
-        return "products";
+        model.addAttribute(CURRENT_PAGE_ATTRIBUTE, currentPage);
+        model.addAttribute(MEASURES_ATTRIBUTE, Measure.values());
+        return PRODUCTS_PAGE;
     }
 
     @PostMapping
@@ -54,7 +66,7 @@ public class ProductController {
                 userService.getCurrentUser().getUsername(), productDTO);
         Validator.validateProduct(productDTO);
         productService.saveNewProduct(productDTO);
-        return "redirect:/commodity_expert/products";
+        return REDIRECT_PREFIX + COMMODITY_EXPERT_PRODUCTS;
     }
 
     @PostMapping("/{id}")
@@ -63,6 +75,6 @@ public class ProductController {
                 userService.getCurrentUser().getUsername());
         Validator.validateAmountForCommodityExpert(amount);
         productService.setAmountById(amount, Long.valueOf(id));
-        return "redirect:/commodity_expert/products";
+        return REDIRECT_PREFIX + COMMODITY_EXPERT_PRODUCTS;
     }
 }

@@ -13,13 +13,14 @@ import java.util.Locale;
 @ControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
     private final MessageSource messageSource;
-    private final String goBack = "goBack";
+    private static final String GO_BACK = "goBack";
 
     @ExceptionHandler
     public <T extends CashRegisterException> ResponseEntity<Object> orderException(T e, Locale locale) {
         String message = messageSource.getMessage(e.getMessage(), null, locale) +
-                System.lineSeparator() + messageSource.getMessage(goBack, null, locale);
+                System.lineSeparator() + messageSource.getMessage(GO_BACK, null, locale);
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 }

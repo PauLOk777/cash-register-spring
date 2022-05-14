@@ -21,34 +21,69 @@ import java.util.Map;
 @Log4j2
 @RequiredArgsConstructor
 public class OrderController {
+
+    private static final String RESOURCE_DELIMITER = "/";
+    private static final String ID_PATH_VARIABLE = "{id}";
+    private static final String ORDER_ID_PATH_VARIABLE = "{orderId}";
+    private static final String PRODUCT_ID_PATH_VARIABLE = "{productId}";
+    private static final String CANCEL = "/cancel";
+    private static final String CLOSE = "/close";
+
+    private static final String SENIOR_CASHIER_ORDERS = "/senior_cashier/orders";
+    private static final String SENIOR_CASHIER_ORDER_BY_ID = SENIOR_CASHIER_ORDERS + RESOURCE_DELIMITER
+            + ID_PATH_VARIABLE;
+    private static final String SENIOR_CASHIER_ORDER_PRODUCTS_BY_ID = SENIOR_CASHIER_ORDERS + RESOURCE_DELIMITER
+            + ORDER_ID_PATH_VARIABLE + RESOURCE_DELIMITER + PRODUCT_ID_PATH_VARIABLE;
+    private static final String SENIOR_CASHIER_CLOSE_ORDER = SENIOR_CASHIER_ORDERS + CLOSE + RESOURCE_DELIMITER
+            + ID_PATH_VARIABLE;
+    private static final String SENIOR_CASHIER_CANCEL_ORDER = SENIOR_CASHIER_ORDERS + CANCEL + RESOURCE_DELIMITER
+            + ID_PATH_VARIABLE;
+    private static final String SENIOR_CASHIER_CANCEL_PRODUCT_IN_ORDER = SENIOR_CASHIER_ORDERS + CANCEL +
+            RESOURCE_DELIMITER + ORDER_ID_PATH_VARIABLE + RESOURCE_DELIMITER + PRODUCT_ID_PATH_VARIABLE;
+
+    private static final String CASHIER_ORDERS = "/cashier/orders";
+    private static final String CASHIER_ORDER_BY_ID = CASHIER_ORDERS + RESOURCE_DELIMITER + ID_PATH_VARIABLE;
+    private static final String CASHIER_ORDER_PRODUCTS_BY_ID = CASHIER_ORDERS + RESOURCE_DELIMITER
+            + ORDER_ID_PATH_VARIABLE + RESOURCE_DELIMITER + PRODUCT_ID_PATH_VARIABLE;
+    private static final String CASHIER_CLOSE_ORDER = CASHIER_ORDERS + CLOSE + RESOURCE_DELIMITER + ID_PATH_VARIABLE;
+
+    private static final String REDIRECT_PREFIX = "redirect:";
+    private static final String ORDERS_ATTRIBUTE = "orders";
+    private static final String ORDER_ID_ATTRIBUTE = "orderId";
+    private static final String PRODUCTS_ATTRIBUTE = "products";
+    private static final String SENIOR_CASHIER_PAGE = "ordersSeniorCashier";
+    private static final String SENIOR_CASHIER_PRODUCTS_PAGE = "orderProductsSeniorCashier";
+    private static final String CASHIER_PAGE = "ordersCashier";
+    private static final String CASHIER_PRODUCTS_PAGE = "ordersCashier";
+
     private final OrderService orderService;
 
-    @GetMapping("/senior_cashier/orders")
+    @GetMapping(SENIOR_CASHIER_ORDERS)
     public String getOrdersSeniorCashier(Model model) {
         getOrders(model);
-        return "ordersSeniorCashier";
+        return SENIOR_CASHIER_PAGE;
     }
 
-    @GetMapping("/cashier/orders")
+    @GetMapping(CASHIER_ORDERS)
     public String getOrdersCashier(Model model) {
         getOrders(model);
-        return "ordersCashier";
+        return CASHIER_PAGE;
     }
 
     private void getOrders(Model model) {
         List<Order> orders = orderService.getOrders();
-        model.addAttribute("orders", orders);
+        model.addAttribute(ORDERS_ATTRIBUTE, orders);
     }
 
 
-    @PostMapping("/senior_cashier/orders")
+    @PostMapping(SENIOR_CASHIER_ORDERS)
     public String createNewOrderSeniorCashier() {
-        return "redirect:/senior_cashier/orders/" + createNewOrder();
+        return REDIRECT_PREFIX + SENIOR_CASHIER_ORDERS + RESOURCE_DELIMITER + createNewOrder();
     }
 
-    @PostMapping("/cashier/orders")
+    @PostMapping(CASHIER_ORDERS)
     public String createNewOrderCashier() {
-        return "redirect:/cashier/orders/" + createNewOrder();
+        return REDIRECT_PREFIX + CASHIER_ORDERS + RESOURCE_DELIMITER + createNewOrder();
     }
 
     private Long createNewOrder() {
@@ -59,38 +94,38 @@ public class OrderController {
         return id;
     }
 
-    @GetMapping("/senior_cashier/orders/{id}")
+    @GetMapping(SENIOR_CASHIER_ORDER_BY_ID)
     public String getOrderByIdSeniorCashier(@PathVariable String id, Model model) {
         getOrderById(id, model);
-        return "orderProductsSeniorCashier";
+        return SENIOR_CASHIER_PRODUCTS_PAGE;
     }
 
-    @GetMapping("/cashier/orders/{id}")
+    @GetMapping(CASHIER_ORDER_BY_ID)
     public String getOrderByIdCashier(@PathVariable String id, Model model) {
         getOrderById(id, model);
-        return "orderProductsCashier";
+        return CASHIER_PRODUCTS_PAGE;
     }
 
-    public void getOrderById(String id, Model model) {
+    private void getOrderById(String id, Model model) {
         log.info("(username: {}) get order by id: {}", id,
                 SecurityContextHolder.getContext().getAuthentication().getName());
         Map<Product, Long> products = orderService.getProductsByOrderId(id);
-        model.addAttribute("orderId", id);
-        model.addAttribute("products", products);
+        model.addAttribute(ORDER_ID_ATTRIBUTE, id);
+        model.addAttribute(PRODUCTS_ATTRIBUTE, products);
     }
 
-    @PostMapping("/senior_cashier/orders/{id}")
+    @PostMapping(SENIOR_CASHIER_ORDER_BY_ID)
     public String addProductSeniorCashier(@PathVariable String id, @RequestParam String productIdentifier,
                              @RequestParam Long amount) {
         addProduct(id, productIdentifier, amount);
-        return "redirect:/senior_cashier/orders/" + id;
+        return REDIRECT_PREFIX + SENIOR_CASHIER_ORDERS + RESOURCE_DELIMITER + id;
     }
 
-    @PostMapping("/cashier/orders/{id}")
+    @PostMapping(CASHIER_ORDER_BY_ID)
     public String addProductCashier(@PathVariable String id, @RequestParam String productIdentifier,
                              @RequestParam Long amount) {
         addProduct(id, productIdentifier, amount);
-        return "redirect:/cashier/orders/" + id;
+        return REDIRECT_PREFIX + CASHIER_ORDERS + RESOURCE_DELIMITER + id;
     }
 
     private void addProduct(String id, String productIdentifier, Long amount) {
@@ -100,58 +135,58 @@ public class OrderController {
         orderService.addProductToOrderByCodeOrName(id, productIdentifier, amount);
     }
 
-    @PostMapping("/senior_cashier/orders/{orderId}/{productId}")
+    @PostMapping(SENIOR_CASHIER_ORDER_PRODUCTS_BY_ID)
     public String changeAmountOfProductSeniorCashier(@PathVariable String orderId, @PathVariable String productId,
                                         @RequestParam Long amount) {
         changeAmountOfProduct(orderId, productId, amount);
-        return "redirect:/senior_cashier/orders/" + orderId;
+        return REDIRECT_PREFIX + SENIOR_CASHIER_ORDERS + RESOURCE_DELIMITER + orderId;
     }
 
-    @PostMapping("/cashier/orders/{orderId}/{productId}")
+    @PostMapping(CASHIER_ORDER_PRODUCTS_BY_ID)
     public String changeAmountOfProductCashier(@PathVariable String orderId, @PathVariable String productId,
                                         @RequestParam Long amount) {
         changeAmountOfProduct(orderId, productId, amount);
-        return "redirect:/cashier/orders/" + orderId;
+        return REDIRECT_PREFIX + CASHIER_ORDERS + RESOURCE_DELIMITER + orderId;
     }
 
-    public void changeAmountOfProduct(String orderId, String productId, Long amount) {
+    private void changeAmountOfProduct(String orderId, String productId, Long amount) {
         log.info("(username: {}) change product amount (id:{}) to order (id:{}) to: {}",
                 productId, orderId, amount, SecurityContextHolder.getContext().getAuthentication().getName());
         Validator.validateAmountForCashier(amount);
         orderService.changeAmountOfProduct(orderId, productId, amount);
     }
 
-    @PostMapping("/senior_cashier/orders/close/{id}")
+    @PostMapping(SENIOR_CASHIER_CLOSE_ORDER)
     public String closeOrderSeniorCashier(@PathVariable String id) {
         closeOrder(id);
-        return "redirect:/senior_cashier/orders";
+        return REDIRECT_PREFIX + SENIOR_CASHIER_ORDERS;
     }
 
-    @PostMapping("/cashier/orders/close/{id}")
+    @PostMapping(CASHIER_CLOSE_ORDER)
     public String closeOrderCashier(@PathVariable String id) {
         closeOrder(id);
-        return "redirect:/cashier/orders";
+        return REDIRECT_PREFIX + CASHIER_ORDERS;
     }
 
-    public void closeOrder(String id) {
+    private void closeOrder(String id) {
         log.info("(username: {}) close order (id:{})", id,
                 SecurityContextHolder.getContext().getAuthentication().getName());
         orderService.makeStatusClosed(id);
     }
 
-    @PostMapping("/senior_cashier/orders/cancel/{id}")
+    @PostMapping(SENIOR_CASHIER_CANCEL_ORDER)
     public String cancelOrder(@PathVariable String id) {
         log.info("(username: {}) cancel order (id:{})", id,
                 SecurityContextHolder.getContext().getAuthentication().getName());
         orderService.cancelOrder(id);
-        return "redirect:/senior_cashier/orders";
+        return REDIRECT_PREFIX + SENIOR_CASHIER_ORDERS;
     }
 
-    @PostMapping("/senior_cashier/orders/cancel/{orderId}/{productId}")
+    @PostMapping(SENIOR_CASHIER_CANCEL_PRODUCT_IN_ORDER)
     public String cancelProduct(@PathVariable String orderId, @PathVariable String productId) {
         log.info("(username: {}) cancel product (id:{}) in order (id:{})",
                 productId, orderId, SecurityContextHolder.getContext().getAuthentication().getName());
         orderService.cancelProduct(orderId, productId);
-        return "redirect:/senior_cashier/orders/" + orderId;
+        return REDIRECT_PREFIX + SENIOR_CASHIER_ORDERS + RESOURCE_DELIMITER + orderId;
     }
 }
