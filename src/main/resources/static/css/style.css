@@ -32,3 +32,9 @@ footer {
 .content-red {
     color: #ff0000;
 }
+
+.alert {
+    width: 70%;
+    text-align: center;
+    margin: 20px auto;
+}

@@ -22,6 +22,7 @@
 </head>
 <body onload="convertCoinsToBill()" class="d-flex flex-column min-vh-100">
     <div th:replace="partials/seniorCashierHeader :: nav"></div>
+    <div th:replace="partials/globalWarningMessage :: div"></div>
     <div class="content-form">
         <div class="mb-5">
             <form th:action="@{/senior_cashier/orders/} + ${orderId}" method="post">

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -8,7 +7,9 @@
 <body>
     <footer class="mt-auto">
         <div class="footer-copyright text-center py-3">
-            [[#{cashRegister}]]. [[#{copyright}]] © 2020 [[#{authorFullName}]].
+            <span>[[#{cashRegister}]]. [[#{copyright}]] © </span>
+            <script type="text/javascript">document.write(new Date().getFullYear());</script>
+            <span> [[#{authorFullName}]].</span>
         </div>
     </footer>
 </body>
