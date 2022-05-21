@@ -25,7 +25,7 @@
     <div th:replace="partials/globalWarningMessage :: div"></div>
     <div class="content-form">
         <div class="mb-5">
-            <form th:action="@{/senior_cashier/orders/} + ${orderId}" method="post">
+            <form th:action="@{/cashier/orders/} + ${orderId}" method="post">
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label th:text="#{codeOrNameOfProduct}" for="productIdentifier"></label>
@@ -62,7 +62,7 @@
                     <td th:text="#{${product.key.measure.name()}}"></td>
                     <td th:text="${product.value}"></td>
                     <td>
-                        <form th:action="@{/senior_cashier/orders/} + ${orderId + '/' + product.key.id}" method="post"
+                        <form th:action="@{/cashier/orders/} + ${orderId + '/' + product.key.id}" method="post"
                               class="form-inline">
                             <div class="form-group mx-sm-1 input-group-sm">
                                 <input type="number" name="amount" class="form-control"/>
@@ -83,7 +83,7 @@
             <form th:action="@{/senior_cashier/orders/cancel/} + ${orderId}" method="post">
                 <button type="submit" class="btn btn-outline-danger btn-lg" th:text="#{cancelOrder}"></button>
             </form>
-            <form th:action="@{/senior_cashier/orders/close/} + ${orderId}" method="post">
+            <form th:action="@{/cashier/orders/close/} + ${orderId}" method="post">
                 <button type="submit" class="btn btn-outline-success btn-lg" th:text="#{closeOrder}"></button>
             </form>
         </div>

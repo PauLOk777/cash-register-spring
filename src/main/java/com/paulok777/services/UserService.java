@@ -1,6 +1,7 @@
 package com.paulok777.services;
 
 import com.paulok777.dto.UserDto;
+import com.paulok777.entities.Role;
 import com.paulok777.entities.User;
 import com.paulok777.exceptions.cashregister.registration.DuplicateUsernameException;
 import com.paulok777.repositories.UserRepository;
@@ -37,6 +38,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(
                 SecurityContextHolder.getContext().getAuthentication().getName()
         ).orElseThrow();
+    }
+
+    public boolean isUserSeniorCashier() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().contains(Role.SENIOR_CASHIER);
     }
 
     @Override

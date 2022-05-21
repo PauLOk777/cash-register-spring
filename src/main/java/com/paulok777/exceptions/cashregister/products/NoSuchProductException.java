@@ -2,8 +2,8 @@ package com.paulok777.exceptions.cashregister.products;
 
 import com.paulok777.exceptions.CashRegisterException;
 
-public class DuplicateCodeOrNameException extends CashRegisterException {
-    public DuplicateCodeOrNameException(String message) {
+public class NoSuchProductException extends CashRegisterException {
+    public NoSuchProductException(String message) {
         super(message);
     }
 }

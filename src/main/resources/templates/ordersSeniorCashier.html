@@ -22,12 +22,13 @@
 </head>
 <body onload="convertCoinsToBill()" class="d-flex flex-column min-vh-100">
     <div th:replace="partials/seniorCashierHeader :: nav"></div>
+    <div th:replace="partials/globalWarningMessage :: div"></div>
     <div class="content-form">
         <div class="flex-sa mb-5">
             <form action="/senior_cashier/reports/x" method="get">
                 <button type="submit" class="btn btn-secondary btn-lg" th:text="#{report.x}"></button>
             </form>
-            <form action="/senior_cashier/orders" method="post">
+            <form action="/cashier/orders" method="post">
                 <button type="submit" class="btn btn-primary btn-lg" th:text="#{newOrder}"></button>
             </form>
             <form action="/senior_cashier/reports/z" method="get">
@@ -57,7 +58,7 @@
                     </form>
                 </td>
                 <td>
-                    <form th:action="@{/senior_cashier/orders/close/} + ${order.id}" method="post">
+                    <form th:action="@{/cashier/orders/close/} + ${order.id}" method="post">
                         <button type="submit" class="btn btn-outline-success btn-sm">[[#{close}]]</button>
                     </form>
                 </td>

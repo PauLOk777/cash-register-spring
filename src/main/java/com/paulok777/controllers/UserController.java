@@ -2,6 +2,7 @@ package com.paulok777.controllers;
 
 import com.paulok777.dto.UserDto;
 import com.paulok777.entities.Role;
+import com.paulok777.exceptions.CashRegisterException;
 import com.paulok777.services.UserService;
 import com.paulok777.utils.Validator;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +33,15 @@ public class UserController {
     }
 
     @PostMapping(REGISTRATION)
-    public String addUser(UserDto userDTO) {
-        log.info("{}", userDTO);
-        Validator.validateUser(userDTO);
-        userService.saveNewUser(userDTO);
+    public String addUser(UserDto userDto) {
+        log.info("New user sends request to register with next email: {}", userDto.getEmail());
+        try {
+            Validator.validateUser(userDto);
+            userService.saveNewUser(userDto);
+        } catch (CashRegisterException e) {
+            e.setRedirectUrl(REDIRECT_PREFIX + REGISTRATION);
+            throw e;
+        }
         return REDIRECT_PREFIX + LOGIN;
     }
 }

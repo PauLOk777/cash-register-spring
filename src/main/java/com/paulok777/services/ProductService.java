@@ -2,7 +2,7 @@ package com.paulok777.services;
 
 import com.paulok777.dto.ProductDto;
 import com.paulok777.entities.Product;
-import com.paulok777.exceptions.cashregister.orders.NoSuchProductException;
+import com.paulok777.exceptions.cashregister.products.NoSuchProductException;
 import com.paulok777.exceptions.cashregister.products.DuplicateCodeOrNameException;
 import com.paulok777.repositories.ProductRepository;
 import com.paulok777.utils.ExceptionKeys;

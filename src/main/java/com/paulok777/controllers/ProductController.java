@@ -3,11 +3,13 @@ package com.paulok777.controllers;
 import com.paulok777.dto.ProductDto;
 import com.paulok777.entities.Measure;
 import com.paulok777.entities.Product;
+import com.paulok777.exceptions.CashRegisterException;
 import com.paulok777.services.ProductService;
 import com.paulok777.services.UserService;
 import com.paulok777.utils.Validator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -33,17 +35,19 @@ public class ProductController {
     private static final String CURRENT_PAGE_ATTRIBUTE = "currentPage";
     private static final String MEASURES_ATTRIBUTE = "measures";
 
-    private static final int DEFAULT_CURRENT_PAGE = 1;
-    private static final int DEFAULT_PAGE_SIZE = 2;
+    @Value("${default.current.page}")
+    private int defaultCurrentPage;
+    @Value("${default.page.size}")
+    private int defaultPageSize;
 
     private final ProductService productService;
     private final UserService userService;
 
     @GetMapping
-    public String getProducts(Model model,@RequestParam(required = false) Optional<Integer> page,
+    public String getProducts(Model model, @RequestParam(required = false) Optional<Integer> page,
                               @RequestParam(required = false) Optional<Integer> size) {
-        int currentPage = page.orElse(DEFAULT_CURRENT_PAGE);
-        int pageSize = size.orElse(DEFAULT_PAGE_SIZE);
+        int currentPage = page.orElse(defaultCurrentPage);
+        int pageSize = size.orElse(defaultPageSize);
         Page<Product> productPage = productService.getProducts(PageRequest.of(currentPage - 1, pageSize));
         model.addAttribute(PRODUCTS_PAGE_DATA_ATTRIBUTE, productPage);
 
@@ -62,19 +66,31 @@ public class ProductController {
 
     @PostMapping
     public String createProduct(ProductDto productDTO) {
+        String redirectUrl = REDIRECT_PREFIX + COMMODITY_EXPERT_PRODUCTS;
         log.info("(username: {}) create product: {}",
                 userService.getCurrentUser().getUsername(), productDTO);
-        Validator.validateProduct(productDTO);
-        productService.saveNewProduct(productDTO);
-        return REDIRECT_PREFIX + COMMODITY_EXPERT_PRODUCTS;
+        try {
+            Validator.validateProduct(productDTO);
+            productService.saveNewProduct(productDTO);
+        } catch (CashRegisterException e) {
+            e.setRedirectUrl(redirectUrl);
+            throw e;
+        }
+        return redirectUrl;
     }
 
     @PostMapping("/{id}")
     public String changeAmountOfProduct(@RequestParam Long amount, @PathVariable String id) {
+        String redirectUrl = REDIRECT_PREFIX + COMMODITY_EXPERT_PRODUCTS;
         log.info("(username: {}) change amount of product (id:{}) to: {}", id, amount,
                 userService.getCurrentUser().getUsername());
-        Validator.validateAmountForCommodityExpert(amount);
+        try {
+            Validator.validateAmountForCommodityExpert(amount);
+        } catch (CashRegisterException e) {
+            e.setRedirectUrl(redirectUrl);
+            throw e;
+        }
         productService.setAmountById(amount, Long.valueOf(id));
-        return REDIRECT_PREFIX + COMMODITY_EXPERT_PRODUCTS;
+        return redirectUrl;
     }
 }

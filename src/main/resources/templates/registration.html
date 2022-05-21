@@ -21,6 +21,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
     <div th:replace="partials/guestHeader :: nav"></div>
+    <div th:replace="partials/globalWarningMessage :: div"></div>
     <div class="authorization-form">
         <form action="/registration" method="post">
             <div class="form-row">

@@ -44,7 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .hasAuthority(Role.SENIOR_CASHIER.getAuthority())
                 .antMatchers("/cashier/orders", "/cashier/orders/{id}",
                         "/cashier/orders/{orderId}/{productId}", "/cashier/orders/close/{id}")
-                    .hasAnyAuthority(Role.CASHIER.getAuthority())
+                    .hasAnyAuthority(Role.CASHIER.getAuthority(), Role.SENIOR_CASHIER.getAuthority())
                 .antMatchers("/logout")
                     .hasAnyAuthority(Role.CASHIER.getAuthority(), Role.SENIOR_CASHIER.getAuthority(), Role.COMMODITY_EXPERT.getAuthority())
                 .antMatchers("/css/**").permitAll()

@@ -7,7 +7,7 @@ import com.paulok777.entities.OrderStatus;
 import com.paulok777.entities.Product;
 import com.paulok777.exceptions.cashregister.InvalidIdException;
 import com.paulok777.exceptions.cashregister.orders.IllegalOrderStateException;
-import com.paulok777.exceptions.cashregister.orders.NoSuchProductException;
+import com.paulok777.exceptions.cashregister.products.NoSuchProductException;
 import com.paulok777.exceptions.cashregister.products.NotEnoughProductsException;
 import com.paulok777.repositories.OrderRepository;
 import com.paulok777.utils.ExceptionKeys;
